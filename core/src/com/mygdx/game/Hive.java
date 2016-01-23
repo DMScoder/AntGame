@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import Creature.Ant;
+import Creature.Attackable;
 import Creature.Nexus;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 /**
  * Created by Immortan on 1/18/2016.
  */
-public class Hive extends Entity{
+public class Hive extends Entity implements Attackable {
 
     boolean deserted = false;
     World world;
@@ -61,6 +62,31 @@ public class Hive extends Entity{
         button = new SpawnButton(this.getX(),this.getY()-this.getHeight()*4,this);
         world.addActor(button);
         setUiScale(0);
+    }
+
+    @Override
+    public void takeDamage(float damage) {
+
+    }
+
+    @Override
+    public void takePoisonDamage(float damage, int poisonType) {
+
+    }
+
+    @Override
+    public void die() {
+
+    }
+
+    @Override
+    public float getHealth() {
+        return 0;
+    }
+
+    @Override
+    public float getArmor() {
+        return 0;
     }
 
     public class SpawnButton extends Entity {

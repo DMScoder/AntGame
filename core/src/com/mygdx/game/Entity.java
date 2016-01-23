@@ -38,9 +38,14 @@ public abstract class Entity extends Actor{
 
     public void setUiScale(int amount) {}
 
-    public int getSize()
+    public int getGridSize()
     {
         return size;
+    }
+
+    public void setGridSize(int i)
+    {
+        size = i;
     }
 
     public void update(long ticks)

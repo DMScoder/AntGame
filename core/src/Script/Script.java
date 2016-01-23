@@ -1,5 +1,7 @@
 package Script;
 
+import Creature.Cricket;
+import Creature.Nexus;
 import com.mygdx.game.World;
 
 /**
@@ -8,7 +10,7 @@ import com.mygdx.game.World;
 public class Script {
 
     private World world;
-    public final int DEFAULT = 1;
+    public static final int DEFAULT = 1;
 
     public Script(int choice,World world)
     {
@@ -24,5 +26,10 @@ public class Script {
     private void defaultScript()
     {
         world.createHive(0,0,1);
+        Nexus cricketTest = new Nexus(world,2);
+        Cricket cricket = new Cricket(100,100);
+        cricketTest.addCreature(cricket);
+        world.addCreature(cricket);
+        world.addEntity(cricketTest);
     }
 }

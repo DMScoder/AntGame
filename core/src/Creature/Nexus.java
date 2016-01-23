@@ -34,7 +34,7 @@ public class Nexus extends Entity {
     public boolean isSelected = false;
     private ArrayList<Creature> members = new ArrayList<Creature>();
 
-    public Nexus(ArrayList<Creature> creatures,World world)
+    public Nexus(ArrayList<Creature> creatures,World world,int team)
     {
         super(0,0);
         this.world=world;
@@ -51,16 +51,16 @@ public class Nexus extends Entity {
 
     public void initialize()
     {
-        this.setTexture("AntIcon");
-        setUiScale(0);
-        if(getTeam()==1)
-            this.addListener(new InputListener()
-            {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
+        if(getTeam()==1) {
+            this.setTexture("AntIcon");
+            setUiScale(0);
+            this.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
                     select();
                     return true;
                 }
             });
+        }
     }
 
 
@@ -94,6 +94,8 @@ public class Nexus extends Entity {
 
     public void draw(Batch batch, float alpha)
     {
+        if(getTeam()!=1)
+            return;
         if(isSelected)
             batch.setColor(Color.GREEN);
         batch.draw(texture,this.getX(),getY(),this.getOriginX(),this.getOriginY(),this.getWidth(),

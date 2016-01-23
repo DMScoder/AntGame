@@ -135,8 +135,8 @@ public class World {
         int x = (int)entity.getX()%25+grid.size/2;
         int y = (int)entity.getY()%25+grid.size/2;
 
-        for(int i=0;i<entity.getSize();i++)
-            for(int j=0;j<entity.getSize();j++)
+        for(int i=0;i<entity.getGridSize();i++)
+            for(int j=0;j<entity.getGridSize();j++)
                 grid.cells[i+x][j+y].entity = null;
     }
 
@@ -145,8 +145,8 @@ public class World {
         int x = (int)entity.getX()%25+grid.size/2;
         int y = (int)entity.getY()%25+grid.size/2;
 
-        for(int i=0;i<entity.getSize();i++)
-            for(int j=0;j<entity.getSize();j++)
+        for(int i=0;i<entity.getGridSize();i++)
+            for(int j=0;j<entity.getGridSize();j++)
                 grid.cells[i+x][j+y].entity = entity;
     }
 

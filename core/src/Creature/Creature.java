@@ -10,9 +10,11 @@ import Grid.*;
 /**
  * Created by Immortan on 1/18/2016.
  */
-public abstract class Creature extends Entity {
+public abstract class Creature extends Entity implements Attackable{
 
-    public boolean attacking = false;
+    public boolean isAttacking = false;
+    public boolean isForaging = false;
+    private Attackable targetEntity = null;
     private MoveToAction moveToAction = new MoveToAction();
     private RotateToAction rotatetoAction = new RotateToAction();
     private float speed=10;
@@ -50,8 +52,10 @@ public abstract class Creature extends Entity {
         this.addAction(rotatetoAction);
     }
 
-    public Vector2 moveTowards(Vector2 vector)
+    public void moveTowards(Vector2 vector)
     {
+        if(isAttacking)
+            return;
         float x=0;
         float y=0;
 
@@ -64,12 +68,26 @@ public abstract class Creature extends Entity {
         else if(vector.y<getY()-25)
             y=-1;
         moveTo(x,y);
-        return new Vector2(x,y);
+        //return new Vector2(x,y);
     }
 
     public void checkSurroundings(Grid grid)
     {
-
+        if(isAttacking=false)
+        {
+            for(int i=-1;i<2;i++)
+            {
+                for(int j=-1;j<2;j++)
+                {
+                    if(i!=0&&j!=0&&grid.cells[i][j].entity!=null)
+                        if(grid.cells[i][j].entity instanceof Attackable &&grid.cells[i][j].entity.getTeam()!=this.getTeam())
+                        {
+                            isAttacking = true;
+                            targetEntity = (Attackable)grid.cells[i][j].entity;
+                        }
+                }
+            }
+        }
     }
 
     public void setSpeed(float s){speed=s;}
@@ -78,5 +96,30 @@ public abstract class Creature extends Entity {
     {
         move(x*25,y*25);
 
+    }
+
+    @Override
+    public void takeDamage(float damage) {
+
+    }
+
+    @Override
+    public void takePoisonDamage(float damage, int poisonType) {
+
+    }
+
+    @Override
+    public void die() {
+
+    }
+
+    @Override
+    public float getHealth() {
+        return 0;
+    }
+
+    @Override
+    public float getArmor() {
+        return 0;
     }
 }
