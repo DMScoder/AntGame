@@ -3,6 +3,7 @@ package Creature;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Entity;
@@ -19,7 +20,6 @@ public class Nexus extends Entity {
 
     World world;
     private Random r = new Random();
-    public int creatureCount=0;
 
     public Entity targetEntity = null;
     public Vector2 targetVector = null;
@@ -38,7 +38,6 @@ public class Nexus extends Entity {
     {
         super(0,0);
         this.world=world;
-        creatureCount+=creatures.size();
         members.addAll(creatures);
         initialize();
     }
@@ -64,6 +63,9 @@ public class Nexus extends Entity {
             });
     }
 
+
+
+
     public void select()
     {
         world.addNexus(this);
@@ -73,6 +75,14 @@ public class Nexus extends Entity {
     public void deselect()
     {
         isSelected = false;
+    }
+
+    public void setTargetVector(Vector3 vector)
+    {
+        if(targetVector==null)
+            targetVector = new Vector2();
+        targetVector.set(vector.x,vector.y);
+        command = MOVE;
     }
 
     public void setMarker(Marker marker)
@@ -95,7 +105,6 @@ public class Nexus extends Entity {
     public void addCreature(Creature creature)
     {
         members.add(creature);
-        creatureCount++;
     }
 
     public void setUiScale(int amount)
@@ -116,7 +125,12 @@ public class Nexus extends Entity {
             case(IDLE):
                 if(ticks%15==0)
                     for(Creature creature : members)
+                    {
+                        world.clearFootPrint(creature);
                         creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
+                        world.setFootPrint(creature);
+                    }
+
                 break;
             //case(ATTACK)
             //    if(targetEntity!=null)
@@ -130,16 +144,31 @@ public class Nexus extends Entity {
             //         for(Creature creature : members)
             //             creature.forage();
             case(MOVE):
-                if(targetVector!=null&&compareVectors(getCenter(),targetVector,50f))
+                if(targetVector!=null&&compareVectors(getCenter(),targetVector,100f))
                 {
                     command = IDLE;
                     targetVector = null;
                 }
-                if(targetVector!=null)
+                else if(targetVector!=null)
                     for(Creature creature : members)
+                    {
+                        world.clearFootPrint(creature);
                         creature.moveTowards(targetVector);
+                        world.setFootPrint(creature);
+                    }
                 break;
         }
+    }
+
+    public ArrayList<Creature> getMembers()
+    {
+        return members;
+    }
+
+    public void merge(Nexus otherNexus)
+    {
+        members.addAll(otherNexus.getMembers());
+        world.removeEntity(otherNexus);
     }
 
     private boolean compareVectors(Vector2 one, Vector2 two, float margin)
@@ -158,6 +187,6 @@ public class Nexus extends Entity {
             sy += creature.getY();
             sx += creature.getX();
         }
-        return new Vector2(sx/creatureCount,sy/creatureCount);
+        return new Vector2(sx/members.size(),sy/members.size());
     }
 }

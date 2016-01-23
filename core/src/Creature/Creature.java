@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.mygdx.game.Entity;
+import Grid.*;
 
 /**
  * Created by Immortan on 1/18/2016.
@@ -49,7 +50,7 @@ public abstract class Creature extends Entity {
         this.addAction(rotatetoAction);
     }
 
-    public void moveTowards(Vector2 vector)
+    public Vector2 moveTowards(Vector2 vector)
     {
         float x=0;
         float y=0;
@@ -63,6 +64,12 @@ public abstract class Creature extends Entity {
         else if(vector.y<getY()-25)
             y=-1;
         moveTo(x,y);
+        return new Vector2(x,y);
+    }
+
+    public void checkSurroundings(Grid grid)
+    {
+
     }
 
     public void setSpeed(float s){speed=s;}
@@ -70,5 +77,6 @@ public abstract class Creature extends Entity {
     public void moveTo(float x, float y)
     {
         move(x*25,y*25);
+
     }
 }

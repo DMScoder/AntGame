@@ -77,8 +77,19 @@ public class World {
 
     public void touchDown(int screenX, int screenY)
     {
-        if(!nexi.isEmpty())
-            createMarker(screenX,screenY);
+        Vector3 vector = new Vector3(screenX,screenY,0);
+        screenToStageCoordinates(vector);
+        if(nexi.size()>1) {
+            Nexus newNexus = new Nexus(this,1);
+            for (Nexus nexus : nexi) {
+                newNexus.merge(nexus);
+            }
+            nexi.clear();
+            addEntity(newNexus);
+            newNexus.setTargetVector(vector);
+        }
+        else if(!nexi.isEmpty())
+            nexi.get(0).setTargetVector(vector);
     }
 
     public void createHive(float x, float y, int team)
@@ -108,12 +119,28 @@ public class World {
 
     public void addCreature(Creature creature)
     {
-        gridFootPrint(creature);
+        setFootPrint(creature);
         creatures.add(creature);
         addActor(creature);
     }
 
-    public void gridFootPrint(Entity entity)
+    public void removeEntity(Entity entity)
+    {
+        entities.remove(entity);
+        entity.remove();
+    }
+
+    public void clearFootPrint(Entity entity)
+    {
+        int x = (int)entity.getX()%25+grid.size/2;
+        int y = (int)entity.getY()%25+grid.size/2;
+
+        for(int i=0;i<entity.getSize();i++)
+            for(int j=0;j<entity.getSize();j++)
+                grid.cells[i+x][j+y].entity = null;
+    }
+
+    public void setFootPrint(Entity entity)
     {
         int x = (int)entity.getX()%25+grid.size/2;
         int y = (int)entity.getY()%25+grid.size/2;
@@ -128,7 +155,7 @@ public class World {
         for(Creature creature : creatures)
         {
             stage.addActor(creature);
-            gridFootPrint(creature);
+            setFootPrint(creature);
         }
         this.entities.addAll(creatures);
         this.creatures.addAll(creatures);
