@@ -125,11 +125,30 @@ public class Nexus extends Entity {
 
     private void order(long ticks)
     {
+        ArrayList remove = new ArrayList();
         for(Creature creature : members)
         {
+            if(!creature.isAlive)
+            {
+                remove.add(creature);
+                world.clearFootPrint(creature);
+                world.removeEntity(creature);
+                continue;
+            }
             creature.checkSurroundings(world.grid);
             world.setFootPrint(creature);
         }
+
+        members.removeAll(remove);
+        if(members.isEmpty())
+        {
+            world.removeEntity(this);
+            return;
+        }
+
+        if(ticks%30==0)
+            for(Creature creature : members)
+                creature.dealDamage();
 
         switch(command)
         {

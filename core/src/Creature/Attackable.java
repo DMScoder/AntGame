@@ -5,6 +5,8 @@ package Creature;
  */
 public interface Attackable {
 
+    void setHealth(float f);
+    void setArmor(float f);
     void takeDamage(float damage, float armorPiercing);
     void takePoisonDamage(float damage, int poisonType);
     void die();

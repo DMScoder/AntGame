@@ -16,6 +16,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
     public boolean isAttacking = false;
     public boolean isForaging = false;
+    public boolean isAlive = true;
 
     private float damage;
     private float armorPiercing;
@@ -91,7 +92,18 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
             return;
         isAttacking = true;
         targetEntity = creature;
-        rotateTowards(creature);
+        rotateTowards(-creature.getX(),-creature.getY());
+    }
+
+    public void dealDamage()
+    {
+        if(!isAttacking)
+            return;
+        ((Attackable)targetEntity).takeDamage(damage,armorPiercing);
+        if(targetEntity instanceof Creature&&!((Creature)targetEntity).isAlive) {
+            targetEntity = null;
+            isAttacking = false;
+        }
     }
 
     public void checkSurroundings(Grid grid)
@@ -116,7 +128,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
                         {
                             isAttacking = true;
                             targetEntity = grid.cells[i+x][j+y].entity;
-                            rotateTowards(targetEntity);
+                            rotateTowards(targetEntity.getX(),targetEntity.getY());
                             if(targetEntity instanceof Creature)
                                 ((Creature)targetEntity).attacked(this);
                             break;
@@ -155,7 +167,14 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
     @Override
     public void takeDamage(float damage, float armorPiercing) {
+        float penetration = armor-armorPiercing;
 
+        if(penetration<0)
+            penetration=0;
+        health -= damage - penetration;
+        System.out.println(this.getClass().toString()+" Heatlh:"+health);
+        if(health<0)
+            this.die();
     }
 
     @Override
@@ -165,29 +184,29 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
     @Override
     public void die() {
-
+        this.isAlive = false;
     }
 
     @Override
     public float getHealth() {
-        return 0;
+        return health;
     }
 
     @Override
     public float getArmor() {
-        return 0;
+        return armor;
     }
 
     @Override
     public float getDamage()
     {
-        return 0;
+        return damage;
     }
 
     @Override
     public float getArmorPiercing()
     {
-        return 0;
+        return armorPiercing;
     }
 
     @Override
@@ -199,18 +218,28 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     @Override
     public void setDamage(float f)
     {
-
+        damage=f;
     }
 
     @Override
     public void setArmorPiercing(float f)
     {
-
+        armorPiercing=f;
     }
 
     @Override
     public void setPoison(int i)
     {
+        poisonType=i;
+    }
 
+    public void setHealth(float f)
+    {
+        health=f;
+    }
+
+    public void setArmor(float f)
+    {
+        armor = f;
     }
 }

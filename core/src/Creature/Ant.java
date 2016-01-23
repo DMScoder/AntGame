@@ -11,6 +11,10 @@ public class Ant extends Creature{
         this.setTexture("Default_Ant");
         this.setSpeed(20);
         this.setGridSize(1);
+        this.setDamage(10);
+        this.setArmor(1);
+        this.setArmorPiercing(0);
+        this.setHealth(100);
     }
 
 

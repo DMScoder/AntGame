@@ -12,5 +12,9 @@ public class Cricket extends Creature{
         this.setTeam(2);
         this.setSpeed(10);
         this.setGridSize(2);
+        this.setDamage(25);
+        this.setArmor(2);
+        this.setArmorPiercing(1);
+        this.setHealth(250);
     }
 }
