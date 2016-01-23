@@ -15,6 +15,9 @@ import java.util.Random;
 
 /**
  * Created by Immortan on 1/18/2016.
+    This class represents a focal point for squads of creatures.
+    All creature orders are given through this class.
+    Creatures should never be directly interfaced with from outside this class.
  */
 public class Nexus extends Entity {
 
@@ -123,12 +126,15 @@ public class Nexus extends Entity {
     private void order(long ticks)
     {
         for(Creature creature : members)
+        {
             creature.checkSurroundings(world.grid);
+            world.setFootPrint(creature);
+        }
 
         switch(command)
         {
             case(IDLE):
-                if(ticks%15==0)
+                if(ticks%60==0)
                     for(Creature creature : members)
                     {
                         if(creature.isAttacking)

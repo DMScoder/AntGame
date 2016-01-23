@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 /**
  * Created by Immortan on 1/18/2016.
  */
-public class Hive extends Entity implements Attackable {
+public class Hive extends Entity{
 
     boolean deserted = false;
     World world;
@@ -63,31 +63,6 @@ public class Hive extends Entity implements Attackable {
         button = new SpawnButton(this.getX(),this.getY()-this.getHeight()*4,this);
         world.addActor(button);
         setUiScale(0);
-    }
-
-    @Override
-    public void takeDamage(float damage) {
-
-    }
-
-    @Override
-    public void takePoisonDamage(float damage, int poisonType) {
-
-    }
-
-    @Override
-    public void die() {
-
-    }
-
-    @Override
-    public float getHealth() {
-        return 0;
-    }
-
-    @Override
-    public float getArmor() {
-        return 0;
     }
 
     public class SpawnButton extends Entity {

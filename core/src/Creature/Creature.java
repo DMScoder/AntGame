@@ -7,13 +7,23 @@ import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.mygdx.game.Entity;
 import Grid.*;
 
+import java.util.Random;
+
 /**
  * Created by Immortan on 1/18/2016.
  */
-public abstract class Creature extends Entity implements Attackable{
+public abstract class Creature extends Entity implements Attackable,DamageCapable{
 
     public boolean isAttacking = false;
     public boolean isForaging = false;
+
+    private float damage;
+    private float armorPiercing;
+    private int poisonType = 0;
+
+    private float health;
+    private float armor;
+
     private Entity targetEntity = null;
     private MoveToAction moveToAction = new MoveToAction();
     private RotateToAction rotatetoAction = new RotateToAction();
@@ -75,10 +85,25 @@ public abstract class Creature extends Entity implements Attackable{
         //return new Vector2(x,y);
     }
 
+    public void attacked(Creature creature)
+    {
+        if(isAttacking)
+            return;
+        isAttacking = true;
+        targetEntity = creature;
+        rotateTowards(creature);
+    }
+
     public void checkSurroundings(Grid grid)
     {
         int x = ((int)getX())/25+grid.size/2;
         int y = ((int)getY())/25+grid.size/2;
+
+        if(grid.cells[x][y].entity!=this&&grid.cells[x][y].entity!=null&&grid.cells[x][y].entity.getTeam()==this.getTeam())
+        {
+            Random r = new Random();
+            moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
+        }
         //System.out.println(this.getClass().toString()+" "+x+" "+y+" "+getX()+" "+getY());
         if(!isAttacking)
         {
@@ -91,8 +116,9 @@ public abstract class Creature extends Entity implements Attackable{
                         {
                             isAttacking = true;
                             targetEntity = grid.cells[i+x][j+y].entity;
-                            System.out.println(targetEntity.getClass().toString());
                             rotateTowards(targetEntity);
+                            if(targetEntity instanceof Creature)
+                                ((Creature)targetEntity).attacked(this);
                             break;
                         }
                 }
@@ -128,7 +154,7 @@ public abstract class Creature extends Entity implements Attackable{
     }
 
     @Override
-    public void takeDamage(float damage) {
+    public void takeDamage(float damage, float armorPiercing) {
 
     }
 
@@ -150,5 +176,41 @@ public abstract class Creature extends Entity implements Attackable{
     @Override
     public float getArmor() {
         return 0;
+    }
+
+    @Override
+    public float getDamage()
+    {
+        return 0;
+    }
+
+    @Override
+    public float getArmorPiercing()
+    {
+        return 0;
+    }
+
+    @Override
+    public int getPoison()
+    {
+        return 0;
+    }
+
+    @Override
+    public void setDamage(float f)
+    {
+
+    }
+
+    @Override
+    public void setArmorPiercing(float f)
+    {
+
+    }
+
+    @Override
+    public void setPoison(int i)
+    {
+
     }
 }
