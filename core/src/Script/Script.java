@@ -27,7 +27,7 @@ public class Script {
     {
         world.createHive(0,0,1);
         Nexus cricketTest = new Nexus(world,2);
-        Cricket cricket = new Cricket(100,100);
+        Cricket cricket = new Cricket(200,200);
         cricketTest.addCreature(cricket);
         world.addCreature(cricket);
         world.addEntity(cricketTest);

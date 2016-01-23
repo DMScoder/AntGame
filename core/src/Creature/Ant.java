@@ -10,6 +10,7 @@ public class Ant extends Creature{
         super(x, y);
         this.setTexture("Default_Ant");
         this.setSpeed(20);
+        this.setGridSize(1);
     }
 
 

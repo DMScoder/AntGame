@@ -37,6 +37,7 @@ public class Hive extends Entity implements Attackable {
         Nexus nexus = new Nexus(world,getTeam());
         for(int i=0;i<10;i++) {
             Ant ant = new Ant(this.getX(), this.getY());
+            ant.setTeam(1);
             nexus.addCreature(ant);
             world.addCreature(ant);
         }

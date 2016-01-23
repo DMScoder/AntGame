@@ -14,7 +14,7 @@ public abstract class Creature extends Entity implements Attackable{
 
     public boolean isAttacking = false;
     public boolean isForaging = false;
-    private Attackable targetEntity = null;
+    private Entity targetEntity = null;
     private MoveToAction moveToAction = new MoveToAction();
     private RotateToAction rotatetoAction = new RotateToAction();
     private float speed=10;
@@ -38,7 +38,7 @@ public abstract class Creature extends Entity implements Attackable{
     public void rotateTowards(Actor actor)
     {
         rotatetoAction.setTarget(actor);
-        rotatetoAction.setDuration(10/speed);
+        rotatetoAction.setDuration(.5f);
         this.addAction(rotatetoAction);
     }
 
@@ -55,7 +55,11 @@ public abstract class Creature extends Entity implements Attackable{
     public void moveTowards(Vector2 vector)
     {
         if(isAttacking)
+        {
+            //rotateTowards(targetEntity);
             return;
+        }
+
         float x=0;
         float y=0;
 
@@ -73,7 +77,30 @@ public abstract class Creature extends Entity implements Attackable{
 
     public void checkSurroundings(Grid grid)
     {
-        if(isAttacking=false)
+        int x = ((int)getX())/25+grid.size/2;
+        int y = ((int)getY())/25+grid.size/2;
+        //System.out.println(this.getClass().toString()+" "+x+" "+y+" "+getX()+" "+getY());
+        if(!isAttacking)
+        {
+            for(int i=-1;i<2;i++)
+            {
+                for(int j=-1;j<2;j++)
+                {
+                    if(i!=0&&j!=0&&grid.cells[i+x][j+y].entity!=null)
+                        if(grid.cells[i+x][j+y].entity instanceof Attackable &&grid.cells[i+x][j+y].entity.getTeam()!=this.getTeam())
+                        {
+                            isAttacking = true;
+                            targetEntity = grid.cells[i+x][j+y].entity;
+                            System.out.println(targetEntity.getClass().toString());
+                            rotateTowards(targetEntity);
+                            break;
+                        }
+                }
+                if(isAttacking)
+                    break;
+            }
+        }
+        /*if(isForaging&&!isAttacking)
         {
             for(int i=-1;i<2;i++)
             {
@@ -84,10 +111,13 @@ public abstract class Creature extends Entity implements Attackable{
                         {
                             isAttacking = true;
                             targetEntity = (Attackable)grid.cells[i][j].entity;
+                            break;
                         }
                 }
+                if(isAttacking)
+                    break;
             }
-        }
+        }*/
     }
 
     public void setSpeed(float s){speed=s;}
@@ -95,7 +125,6 @@ public abstract class Creature extends Entity implements Attackable{
     public void moveTo(float x, float y)
     {
         move(x*25,y*25);
-
     }
 
     @Override

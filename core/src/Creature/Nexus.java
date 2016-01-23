@@ -122,29 +122,23 @@ public class Nexus extends Entity {
 
     private void order(long ticks)
     {
+        for(Creature creature : members)
+            creature.checkSurroundings(world.grid);
+
         switch(command)
         {
             case(IDLE):
                 if(ticks%15==0)
                     for(Creature creature : members)
                     {
+                        if(creature.isAttacking)
+                            continue;
                         world.clearFootPrint(creature);
                         creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
                         world.setFootPrint(creature);
                     }
 
                 break;
-            //case(ATTACK)
-            //    if(targetEntity!=null)
-            //        for(Creature creature : members)
-            //            creature.moveTowards(targetEntity);
-            //case(FORAGE)
-            //    if(targetVector!=null)
-            //        for(Creature creature : members)
-            //            creature.moveTowards(targetVector);
-            //     else
-            //         for(Creature creature : members)
-            //             creature.forage();
             case(MOVE):
                 if(targetVector!=null&&compareVectors(getCenter(),targetVector,100f))
                 {
@@ -154,6 +148,8 @@ public class Nexus extends Entity {
                 else if(targetVector!=null)
                     for(Creature creature : members)
                     {
+                        if(creature.isAttacking)
+                            continue;
                         world.clearFootPrint(creature);
                         creature.moveTowards(targetVector);
                         world.setFootPrint(creature);

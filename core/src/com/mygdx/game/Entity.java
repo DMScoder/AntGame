@@ -36,6 +36,8 @@ public abstract class Entity extends Actor{
         return team;
     }
 
+    public void setTeam(int i){team = i;}
+
     public void setUiScale(int amount) {}
 
     public int getGridSize()
