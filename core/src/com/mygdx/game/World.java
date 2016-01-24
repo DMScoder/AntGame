@@ -5,8 +5,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+
 import Grid.*;
 import Script.*;
 import com.badlogic.gdx.utils.Array;
@@ -25,11 +30,15 @@ public class World {
     ArrayList <Hive> Hives = new ArrayList<Hive>();
     ArrayList <Nexus> nexi = new ArrayList<Nexus>();
     long ticks=0;
+    Group resources = new Group();
+    Group everythingElse = new Group();
 
     public World(Stage stage,OrthographicCamera camera)
     {
         this.stage = stage;
         this.camera = camera;
+        stage.addActor(resources);
+        stage.addActor(everythingElse);
         level_script = new Script(1,this);
     }
 
@@ -98,7 +107,7 @@ public class World {
         Hive hive = new Hive(x,y,this,team);
         Hives.add(hive);
         entities.add(hive);
-        stage.addActor(hive);
+        addResource(hive);
     }
 
     public void createMarker(float screenX,float screenY)
@@ -178,9 +187,14 @@ public class World {
         this.entities.addAll(creatures);
     }
 
+    public void addResource(Actor actor)
+    {
+        resources.addActor(actor);
+    }
+
     public void addActor(Actor actor)
     {
-        stage.addActor(actor);
+        everythingElse.addActor(actor);
     }
 
     public Vector3 screenToStageCoordinates (Vector3 screenCoords) {

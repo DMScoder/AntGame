@@ -16,7 +16,7 @@ public class Hive extends Entity{
     SpawnButton button=null;
 
     public Hive(float x, float y,World world, int team) {
-        super(x, y,team);
+        super(x, y,50,team);
         this.world = world;
         this.setTexture("AntHill");
         this.scaleBy(5f);
@@ -70,7 +70,7 @@ public class Hive extends Entity{
         Hive host;
 
         public SpawnButton(float x, float y,Hive host) {
-            super(x, y);
+            super(x, y,2,0);
             this.host = host;
             this.setTexture("AntIcon");
             this.addListener(new InputListener()

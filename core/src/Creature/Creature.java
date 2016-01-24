@@ -32,7 +32,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
     public Creature(float x, float y)
     {
-        super(x,y);
+        super(x,y,100,0);
     }
 
     private void move(float x, float y)

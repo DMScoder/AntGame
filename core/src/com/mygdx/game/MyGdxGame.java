@@ -9,6 +9,27 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+/*
+Main class for all entrypoints
+Handles inputs and a bit of stage stuff
+Passes most of the work to the master class "World"
+
+Things that should be added:
+More creature types
+Foraging ability
+Research
+Biomass/resources in general
+Integration with player object
+Some sort of terrain
+Weather
+Animations!
+Sounds
+Hive options (like upgrade or different worker type)
+AI hives
+Zoom to cursor
+Fix selection box issue
+*/
+
 public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 	Stage stage;
 	World world;

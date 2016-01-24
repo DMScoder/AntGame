@@ -4,6 +4,8 @@ import Creature.Cricket;
 import Creature.Nexus;
 import com.mygdx.game.World;
 
+import java.util.Random;
+
 /**
  * Created by Immortan on 1/21/2016.
  */
@@ -26,16 +28,20 @@ public class Script {
     private void defaultScript()
     {
         world.createHive(0,0,1);
-        Nexus cricketTest = new Nexus(world,2);
-        Cricket cricket = new Cricket(200,200);
-        cricketTest.addCreature(cricket);
-        world.addCreature(cricket);
-        Cricket cricket2 = new Cricket(200,200);
-        cricketTest.addCreature(cricket2);
-        world.addCreature(cricket2);
-        Cricket cricket3 = new Cricket(200,200);
-        cricketTest.addCreature(cricket3);
-        world.addCreature(cricket3);
-        world.addEntity(cricketTest);
+        generateCricketNexus();
+    }
+
+    private void generateCricketNexus()
+    {
+        Random r = new Random();
+        int n = 100;
+        Nexus crickets = new Nexus(world,2);
+        for(int i=0;i<n;i++)
+        {
+            Cricket cricket = new Cricket(1500,1500);
+            crickets.addCreature(cricket);
+            world.addCreature(cricket);
+        }
+        world.addEntity(crickets);
     }
 }

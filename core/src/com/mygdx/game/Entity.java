@@ -19,9 +19,11 @@ public abstract class Entity extends Actor{
     {
       this.setPosition(x,y);
     }
-    public Entity(float x, float y, int team)
+    public Entity(float x, float y, int zIndex,int team)
     {
-        this.setPosition(x,y);this.team = team;
+        this.setZIndex(zIndex);
+        this.setPosition(x,y);
+        this.team = team;
     }
 
     public void setTexture(String name)

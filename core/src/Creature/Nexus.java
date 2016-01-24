@@ -47,7 +47,7 @@ public class Nexus extends Entity {
 
     public Nexus(World world,int team)
     {
-        super(0,0,team);
+        super(0,0,2,team);
         this.world=world;
         initialize();
     }
@@ -134,18 +134,18 @@ public class Nexus extends Entity {
             Resource resource6 = new Resource(creature.getX(),creature.getY(),"CricketLeg3",2,creature.getRotation());
             Resource resource7 = new Resource(creature.getX(),creature.getY(),"CricketLeg4",2,creature.getRotation());
             Resource resource8 = new Resource(creature.getX(),creature.getY(),"CricketLeg5",2,creature.getRotation());
-            world.addEntity(resource1);
-            world.addEntity(resource2);
-            world.addEntity(resource3);
-            world.addEntity(resource5);
-            world.addEntity(resource6);
-            world.addEntity(resource7);
-            world.addEntity(resource8);
+            world.addResource(resource1);
+            world.addResource(resource2);
+            world.addResource(resource3);
+            world.addResource(resource5);
+            world.addResource(resource6);
+            world.addResource(resource7);
+            world.addResource(resource8);
         }
         else
         {
             Resource resource = new Resource(creature.getX(),creature.getY(),"Default_Ant_Corpse",2,creature.getRotation());
-            world.addEntity(resource);
+            world.addResource(resource);
         }
     }
 
