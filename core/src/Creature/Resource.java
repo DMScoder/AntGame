@@ -7,8 +7,9 @@ import com.mygdx.game.Entity;
  */
 public class Resource extends Entity {
 
-    public Resource(float x, float y, String type, int biomass) {
+    public Resource(float x, float y, String type, int biomass, float rotation) {
         super(x, y);
-        //this.setTexture();
+        this.setRotation(rotation);
+        this.setTexture(type);
     }
 }

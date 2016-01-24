@@ -1,10 +1,12 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
@@ -12,6 +14,12 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 	World world;
 	OrthographicCamera camera;
 	FPSLogger fps = new FPSLogger();
+	ShapeRenderer shapeRenderer;
+	boolean drawSelection = false;
+	int touchX=0;
+	int touchY=0;
+	int lastX=0;
+	int lastY=0;
 
 	@Override
 	public void create () {
@@ -23,7 +31,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 		multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(multiplexer);
 		stage.getViewport().setCamera(camera);
-
+		shapeRenderer = new ShapeRenderer();
 	}
 
 	@Override
@@ -36,6 +44,8 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 		camera.update();
 		world.update();
 		fps.log();
+		if(drawSelection)
+			drawSelectionBox();
 	}
 
 	private void handleInput()
@@ -51,6 +61,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 			camera.translate(0,-10f*camera.zoom);
 		if(Gdx.input.isKeyPressed(Input.Keys.D))
 			camera.translate(10f*camera.zoom,0);
+	}
+
+	public void drawSelectionBox() {
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.rect(touchX,touchY,lastX-touchX,lastY-touchY);
+		shapeRenderer.end();
 	}
 
 	@Override
@@ -88,22 +105,39 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
 		if(button == Input.Buttons.RIGHT)
+		{
 			world.touchDown(screenX,screenY);
+			drawSelection = false;
+		}
+
 
 		else if(button == Input.Buttons.LEFT)
+		{
 			world.clearPopUps();
+			drawSelection = true;
+		}
 
+		touchX = screenX;
+		touchY = Gdx.graphics.getHeight()-screenY;
+		lastX = touchX;
+		lastY = touchY;
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if(drawSelection)
+			world.selection(touchX,touchY,lastX,lastY);
+		drawSelection = false;
 		return false;
 	}
 
 	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
+	public boolean touchDragged(int screenX, int screenY, int pointer)
+	{
+		lastX = screenX;
+		lastY = Gdx.graphics.getHeight()-screenY;
+		return true;
 	}
 
 	@Override

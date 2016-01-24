@@ -25,7 +25,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     private float health;
     private float armor;
 
-    private Entity targetEntity = null;
+    private Creature targetCreature = null;
     private MoveToAction moveToAction = new MoveToAction();
     private RotateToAction rotatetoAction = new RotateToAction();
     private float speed=10;
@@ -67,7 +67,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     {
         if(isAttacking)
         {
-            //rotateTowards(targetEntity);
+            //rotateTowards(targetCreature);
             return;
         }
 
@@ -91,17 +91,18 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
         if(isAttacking)
             return;
         isAttacking = true;
-        targetEntity = creature;
-        rotateTowards(-creature.getX(),-creature.getY());
+        targetCreature = creature;
+        rotateTowards(-getX()+creature.getX(),-getY()+creature.getY());
     }
 
     public void dealDamage()
     {
         if(!isAttacking)
             return;
-        ((Attackable)targetEntity).takeDamage(damage,armorPiercing);
-        if(targetEntity instanceof Creature&&!((Creature)targetEntity).isAlive) {
-            targetEntity = null;
+        targetCreature.attacked(this);
+        targetCreature.takeDamage(damage,armorPiercing);
+        if(!targetCreature.isAlive) {
+            targetCreature = null;
             isAttacking = false;
         }
     }
@@ -126,11 +127,13 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
                     if(i!=0&&j!=0&&grid.cells[i+x][j+y].entity!=null)
                         if(grid.cells[i+x][j+y].entity instanceof Attackable &&grid.cells[i+x][j+y].entity.getTeam()!=this.getTeam())
                         {
+                            if((!((Creature)grid.cells[i+x][j+y].entity).isAlive))
+                                continue;
                             isAttacking = true;
-                            targetEntity = grid.cells[i+x][j+y].entity;
-                            rotateTowards(targetEntity.getX(),targetEntity.getY());
-                            if(targetEntity instanceof Creature)
-                                ((Creature)targetEntity).attacked(this);
+                            targetCreature = (Creature)grid.cells[i+x][j+y].entity;
+                            rotateTowards(targetCreature.getX(),targetCreature.getY());
+                            if(targetCreature instanceof Creature)
+                                targetCreature.attacked(this);
                             break;
                         }
                 }
@@ -148,7 +151,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
                         if(grid.cells[i][j].entity instanceof Attackable &&grid.cells[i][j].entity.getTeam()!=this.getTeam())
                         {
                             isAttacking = true;
-                            targetEntity = (Attackable)grid.cells[i][j].entity;
+                            targetCreature = (Attackable)grid.cells[i][j].entity;
                             break;
                         }
                 }
@@ -172,7 +175,6 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
         if(penetration<0)
             penetration=0;
         health -= damage - penetration;
-        System.out.println(this.getClass().toString()+" Heatlh:"+health);
         if(health<0)
             this.die();
     }

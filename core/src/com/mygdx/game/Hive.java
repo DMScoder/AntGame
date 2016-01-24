@@ -35,7 +35,7 @@ public class Hive extends Entity{
     public void spawnAnts()
     {
         Nexus nexus = new Nexus(world,getTeam());
-        for(int i=0;i<1;i++) {
+        for(int i=0;i<10;i++) {
             Ant ant = new Ant(this.getX(), this.getY());
             ant.setTeam(1);
             nexus.addCreature(ant);

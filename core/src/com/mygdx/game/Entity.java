@@ -13,6 +13,7 @@ public abstract class Entity extends Actor{
     public Texture texture;
     private int team=0;
     private int size=0;
+    private int priority = 0;
 
     public Entity(float x, float y)
     {

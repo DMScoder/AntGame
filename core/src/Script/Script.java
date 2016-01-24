@@ -30,6 +30,12 @@ public class Script {
         Cricket cricket = new Cricket(200,200);
         cricketTest.addCreature(cricket);
         world.addCreature(cricket);
+        Cricket cricket2 = new Cricket(200,200);
+        cricketTest.addCreature(cricket2);
+        world.addCreature(cricket2);
+        Cricket cricket3 = new Cricket(200,200);
+        cricketTest.addCreature(cricket3);
+        world.addCreature(cricket3);
         world.addEntity(cricketTest);
     }
 }

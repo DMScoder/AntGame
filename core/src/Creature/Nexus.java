@@ -123,6 +123,32 @@ public class Nexus extends Entity {
         order(ticks);
     }
 
+    public void spawnResource(String name, Creature creature)
+    {
+        if(name.equals("Creature.Cricket"))
+        {
+            Resource resource1 = new Resource(creature.getX(),creature.getY(),"CricketBody",8,creature.getRotation());
+            Resource resource2 = new Resource(creature.getX(),creature.getY(),"CricketHead",4,creature.getRotation());
+            Resource resource3 = new Resource(creature.getX(),creature.getY(),"CricketLeg1",2,creature.getRotation());
+            Resource resource5 = new Resource(creature.getX(),creature.getY(),"CricketLeg2",2,creature.getRotation());
+            Resource resource6 = new Resource(creature.getX(),creature.getY(),"CricketLeg3",2,creature.getRotation());
+            Resource resource7 = new Resource(creature.getX(),creature.getY(),"CricketLeg4",2,creature.getRotation());
+            Resource resource8 = new Resource(creature.getX(),creature.getY(),"CricketLeg5",2,creature.getRotation());
+            world.addEntity(resource1);
+            world.addEntity(resource2);
+            world.addEntity(resource3);
+            world.addEntity(resource5);
+            world.addEntity(resource6);
+            world.addEntity(resource7);
+            world.addEntity(resource8);
+        }
+        else
+        {
+            Resource resource = new Resource(creature.getX(),creature.getY(),"Default_Ant_Corpse",2,creature.getRotation());
+            world.addEntity(resource);
+        }
+    }
+
     private void order(long ticks)
     {
         ArrayList remove = new ArrayList();
@@ -133,6 +159,7 @@ public class Nexus extends Entity {
                 remove.add(creature);
                 world.clearFootPrint(creature);
                 world.removeEntity(creature);
+                spawnResource(creature.getClass().getName(),creature);
                 continue;
             }
             creature.checkSurroundings(world.grid);
@@ -157,7 +184,10 @@ public class Nexus extends Entity {
                     for(Creature creature : members)
                     {
                         if(creature.isAttacking)
-                            continue;
+                        {
+                            command = MOVE;
+                            targetVector = new Vector2(creature.getX(),creature.getY());
+                        }
                         world.clearFootPrint(creature);
                         creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
                         world.setFootPrint(creature);
@@ -165,7 +195,7 @@ public class Nexus extends Entity {
 
                 break;
             case(MOVE):
-                if(targetVector!=null&&compareVectors(getCenter(),targetVector,100f))
+                if(targetVector!=null&&compareVectors(getCenter(),targetVector,50f))
                 {
                     command = IDLE;
                     targetVector = null;

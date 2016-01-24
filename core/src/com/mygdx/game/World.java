@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import Creature.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,7 +23,6 @@ public class World {
     ArrayList <Marker> markers = new ArrayList<Marker>();
     ArrayList <Entity> entities = new ArrayList<Entity>();
     ArrayList <Hive> Hives = new ArrayList<Hive>();
-    ArrayList <Creature> creatures = new ArrayList<Creature>();
     ArrayList <Nexus> nexi = new ArrayList<Nexus>();
     long ticks=0;
 
@@ -87,6 +87,7 @@ public class World {
             nexi.clear();
             addEntity(newNexus);
             newNexus.setTargetVector(vector);
+            newNexus.select();
         }
         else if(!nexi.isEmpty())
             nexi.get(0).setTargetVector(vector);
@@ -120,7 +121,7 @@ public class World {
     public void addCreature(Creature creature)
     {
         setFootPrint(creature);
-        creatures.add(creature);
+        entities.add(creature);
         addActor(creature);
     }
 
@@ -150,6 +151,23 @@ public class World {
                 grid.cells[x+i][y+j].entity = entity;
     }
 
+    public void selection(int x, int y, int w, int h)
+    {
+        Vector3 vector1 = new Vector3(x,y,0);
+        Vector3 vector2 = new Vector3(w,h,0);
+        screenToStageCoordinates(vector1);
+        screenToStageCoordinates(vector2);
+        Rectangle rectangle = new Rectangle(vector1.x,vector1.y,vector2.x*50,vector2.y*50);
+        for(Entity entity : entities)
+        {
+            if(entity instanceof Nexus && entity.getTeam()==1)
+            {
+                if(rectangle.contains(entity.getX(),entity.getY()))
+                    ((Nexus) entity).select();
+            }
+        }
+    }
+
     public void addCreatures(ArrayList<Creature> creatures)
     {
         for(Creature creature : creatures)
@@ -158,7 +176,6 @@ public class World {
             setFootPrint(creature);
         }
         this.entities.addAll(creatures);
-        this.creatures.addAll(creatures);
     }
 
     public void addActor(Actor actor)
@@ -183,5 +200,10 @@ public class World {
             Entity entity = entities.get(i);
             entity.update(ticks);
         }
+
+        if(ticks%120==0)
+            for(int i=0;i<grid.size;i++)
+                for(int j=0;j<grid.size;j++)
+                    grid.cells[i][j].entity=null;
     }
 }
