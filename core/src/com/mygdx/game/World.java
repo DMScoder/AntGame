@@ -2,15 +2,13 @@ package com.mygdx.game;
 
 import Creature.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 import Grid.*;
 import Script.*;
@@ -33,6 +31,8 @@ public class World {
     Group resources = new Group();
     Group everythingElse = new Group();
 
+    BitmapFont font = new BitmapFont();
+
     public World(Stage stage,OrthographicCamera camera)
     {
         this.stage = stage;
@@ -46,6 +46,11 @@ public class World {
     {
         for(Entity entity : entities)
             entity.setUiScale(amount);
+    }
+
+    public BitmapFont getFont()
+    {
+        return font;
     }
 
     public void clearPopUps()
@@ -140,6 +145,12 @@ public class World {
         entity.remove();
     }
 
+    public void forage()
+    {
+        for(Nexus nexus : nexi)
+            nexus.forage();
+    }
+
     public void clearFootPrint(Entity entity)
     {
         int x = (int)entity.getX()/25+grid.size/2;
@@ -148,6 +159,14 @@ public class World {
         for(int i=0;i<entity.getGridSize();i++)
             for(int j=0;j<entity.getGridSize();j++)
                 grid.cells[i+x][j+y].entity = null;
+    }
+
+    public Cell getFootPrint(Entity entity)
+    {
+        int x = (int)entity.getX()/25+grid.size/2;
+        int y = (int)entity.getY()/25+grid.size/2;
+
+        return grid.cells[x][y];
     }
 
     public void setFootPrint(Entity entity)
@@ -162,11 +181,11 @@ public class World {
 
     public void selection(int x, int y, int w, int h)
     {
+        System.out.println(x+" "+y+" "+w+" "+h);
         Vector3 vector1 = new Vector3(x,y,0);
-        Vector3 vector2 = new Vector3(w,h,0);
         screenToStageCoordinates(vector1);
-        screenToStageCoordinates(vector2);
-        Rectangle rectangle = new Rectangle(vector1.x,vector1.y,vector2.x*50,vector2.y*50);
+        System.out.println(vector1.x+" "+vector1.y+" "+w+" "+h);
+        Rectangle rectangle = new Rectangle(vector1.x,vector1.y,w*camera.zoom,h*camera.zoom);
         for(Entity entity : entities)
         {
             if(entity instanceof Nexus && entity.getTeam()==1)

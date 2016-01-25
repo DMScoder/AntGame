@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.IndexArray;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -27,7 +28,8 @@ Sounds
 Hive options (like upgrade or different worker type)
 AI hives
 Zoom to cursor
-Fix selection box issue
+Centipedes and/or worms
+DONE! Fix selection box issue
 */
 
 public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
@@ -108,7 +110,10 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
+	public boolean keyDown(int keycode)
+	{
+		if(keycode == Input.Keys.F)
+			world.forage();
 		return false;
 	}
 
@@ -134,23 +139,25 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 
 		else if(button == Input.Buttons.LEFT)
 		{
-			world.clearPopUps();
+			if(!drawSelection)
+				world.clearPopUps();
 			drawSelection = true;
+			touchX = screenX;
+			touchY = Gdx.graphics.getHeight()-screenY;
+			lastX = touchX;
+			lastY = touchY;
 		}
 
-		touchX = screenX;
-		touchY = Gdx.graphics.getHeight()-screenY;
-		lastX = touchX;
-		lastY = touchY;
-		return false;
+
+		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if(drawSelection)
-			world.selection(touchX,touchY,lastX,lastY);
+			world.selection(touchX,Gdx.graphics.getHeight()-lastY,Math.abs(lastX-touchX),Math.abs(lastY-touchY));
 		drawSelection = false;
-		return false;
+		return true;
 	}
 
 	@Override
@@ -163,7 +170,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
+		return true;
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package Creature;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -31,8 +33,9 @@ public class Nexus extends Entity {
     public static final int IDLE = 0;
     public static final int ATTACK = 1;
     public static final int MOVE = 2;
-    public static final int FORAGE = 3;
+    //public static final int FORAGE = 3;
     public int command = 0;
+    public boolean isForaging = false;
 
     public boolean isSelected = false;
     private ArrayList<Creature> members = new ArrayList<Creature>();
@@ -55,11 +58,12 @@ public class Nexus extends Entity {
     public void initialize()
     {
         if(getTeam()==1) {
-            this.setTexture("AntIcon");
+            this.setTexture("SelectionCircle");
             setUiScale(0);
             this.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
-                    select();
+                    if(buttons == Input.Buttons.LEFT)
+                        select();
                     return true;
                 }
             });
@@ -88,6 +92,16 @@ public class Nexus extends Entity {
         command = MOVE;
     }
 
+    public void forage()
+    {
+        if(isForaging)
+        {
+            isForaging=false;
+
+        }
+
+    }
+
     public void setMarker(Marker marker)
     {
         targetMarker = marker;
@@ -101,10 +115,18 @@ public class Nexus extends Entity {
             return;
         if(isSelected)
             batch.setColor(Color.GREEN);
+        else if(isForaging)
+            batch.setColor(Color.YELLOW);
+        else if(command==MOVE)
+            batch.setColor(Color.BLUE);
         batch.draw(texture,this.getX(),getY(),this.getOriginX(),this.getOriginY(),this.getWidth(),
                 this.getHeight(),this.getScaleX(), this.getScaleY(),this.getRotation(),0,0,
                 texture.getWidth(),texture.getHeight(),false,false);
         batch.setColor(1f,1f,1f,1f);
+        BitmapFont font = world.getFont();
+        font.setColor(Color.RED);
+        font.getData().setScale(world.getZoom()+1);
+        font.draw(batch,""+members.size(),getX()+texture.getWidth()/4-world.getZoom()*10,getY()+texture.getHeight()/(3f/2f));
     }
 
     public void addCreature(Creature creature)
@@ -114,7 +136,7 @@ public class Nexus extends Entity {
 
     public void setUiScale(int amount)
     {
-        this.setScale(world.getZoom()*.5f+1);
+        this.setScale(world.getZoom()*.5f);
     }
 
     public void update(long ticks)
@@ -127,13 +149,13 @@ public class Nexus extends Entity {
     {
         if(name.equals("Creature.Cricket"))
         {
-            Resource resource1 = new Resource(creature.getX(),creature.getY(),"CricketBody",8,creature.getRotation());
-            Resource resource2 = new Resource(creature.getX(),creature.getY(),"CricketHead",4,creature.getRotation());
-            Resource resource3 = new Resource(creature.getX(),creature.getY(),"CricketLeg1",2,creature.getRotation());
-            Resource resource5 = new Resource(creature.getX(),creature.getY(),"CricketLeg2",2,creature.getRotation());
-            Resource resource6 = new Resource(creature.getX(),creature.getY(),"CricketLeg3",2,creature.getRotation());
-            Resource resource7 = new Resource(creature.getX(),creature.getY(),"CricketLeg4",2,creature.getRotation());
-            Resource resource8 = new Resource(creature.getX(),creature.getY(),"CricketLeg5",2,creature.getRotation());
+            Resource resource1 = new Resource(creature.getX(),creature.getY(),"CricketBody",8,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource2 = new Resource(creature.getX(),creature.getY(),"CricketHead",4,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource3 = new Resource(creature.getX(),creature.getY(),"CricketLeg1",2,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource5 = new Resource(creature.getX(),creature.getY(),"CricketLeg2",2,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource6 = new Resource(creature.getX(),creature.getY(),"CricketLeg3",2,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource7 = new Resource(creature.getX(),creature.getY(),"CricketLeg4",2,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource8 = new Resource(creature.getX(),creature.getY(),"CricketLeg5",2,creature.getRotation(),world.getFootPrint(creature));
             world.addResource(resource1);
             world.addResource(resource2);
             world.addResource(resource3);
@@ -144,7 +166,7 @@ public class Nexus extends Entity {
         }
         else
         {
-            Resource resource = new Resource(creature.getX(),creature.getY(),"Default_Ant_Corpse",2,creature.getRotation());
+            Resource resource = new Resource(creature.getX(),creature.getY(),"Default_Ant_Corpse",2,creature.getRotation(),world.getFootPrint(creature));
             world.addResource(resource);
         }
     }
@@ -162,7 +184,8 @@ public class Nexus extends Entity {
                 spawnResource(creature.getClass().getName(),creature);
                 continue;
             }
-            creature.checkSurroundings(world.grid);
+            if(ticks%5==0)
+                creature.checkSurroundings(world.grid);
             world.setFootPrint(creature);
         }
 
@@ -180,7 +203,6 @@ public class Nexus extends Entity {
         switch(command)
         {
             case(IDLE):
-                if(ticks%60==0)
                     for(Creature creature : members)
                     {
                         if(creature.isAttacking)
@@ -188,14 +210,18 @@ public class Nexus extends Entity {
                             command = MOVE;
                             targetVector = new Vector2(creature.getX(),creature.getY());
                         }
-                        world.clearFootPrint(creature);
-                        creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
-                        world.setFootPrint(creature);
+
+                        if(r.nextInt(30)==0)
+                        {
+                            world.clearFootPrint(creature);
+                            creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
+                            world.setFootPrint(creature);
+                        }
                     }
 
                 break;
             case(MOVE):
-                if(targetVector!=null&&compareVectors(getCenter(),targetVector,50f))
+                if(targetVector!=null&&compareVectors(getCenter(),targetVector,100f))
                 {
                     command = IDLE;
                     targetVector = null;
@@ -221,6 +247,7 @@ public class Nexus extends Entity {
     public void merge(Nexus otherNexus)
     {
         members.addAll(otherNexus.getMembers());
+        otherNexus.members.clear();
         world.removeEntity(otherNexus);
     }
 
