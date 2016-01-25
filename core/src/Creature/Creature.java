@@ -1,11 +1,14 @@
 package Creature;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.mygdx.game.Entity;
 import Grid.*;
+import com.mygdx.game.World;
 
 import java.util.Random;
 
@@ -21,6 +24,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     private float damage;
     private float armorPiercing;
     private int poisonType = 0;
+    public Resource resource = null;
 
     private float health;
     private float armor;
@@ -44,13 +48,6 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
         moveToAction.setDuration(10/speed);
         rotateTowards(x,y);
         this.addAction(moveToAction);
-    }
-
-    public void rotateTowards(Actor actor)
-    {
-        rotatetoAction.setTarget(actor);
-        rotatetoAction.setDuration(.5f);
-        this.addAction(rotatetoAction);
     }
 
     private void rotateTowards(float x, float y)
@@ -83,7 +80,6 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
         else if(vector.y<getY()-25)
             y=-1;
         moveTo(x,y);
-        //return new Vector2(x,y);
     }
 
     public void attacked(Creature creature)
@@ -92,7 +88,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
             return;
         isAttacking = true;
         targetCreature = creature;
-        rotateTowards(-getX()+creature.getX(),-getY()+creature.getY());
+        rotateTowards(getX()+creature.getX(),getY()+creature.getY());
     }
 
     public void dealDamage()
@@ -117,48 +113,79 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
             Random r = new Random();
             moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
         }
-        //System.out.println(this.getClass().toString()+" "+x+" "+y+" "+getX()+" "+getY());
         if(!isAttacking)
         {
             for(int i=-1;i<2;i++)
             {
-                for(int j=-1;j<2;j++)
+                for (int j = -1; j < 2; j++)
                 {
-                    if(i!=0&&j!=0&&grid.cells[i+x][j+y].entity!=null)
-                        if(grid.cells[i+x][j+y].entity instanceof Attackable &&grid.cells[i+x][j+y].entity.getTeam()!=this.getTeam())
-                        {
-                            if((!((Creature)grid.cells[i+x][j+y].entity).isAlive))
-                                continue;
-                            isAttacking = true;
-                            targetCreature = (Creature)grid.cells[i+x][j+y].entity;
-                            rotateTowards(targetCreature.getX(),targetCreature.getY());
-                            if(targetCreature instanceof Creature)
-                                targetCreature.attacked(this);
-                            break;
-                        }
+                    checkEnemy(i, j, x, y, grid);
+                    if(isAttacking)
+                        break;
                 }
-                if(isAttacking)
+                if (isAttacking)
                     break;
+            }
+            if(!isAttacking&&isForaging&&resource==null)
+            {
+                for(int i=-1;i<2;i++)
+                {
+                    for (int j = -1; j < 2; j++)
+                    {
+                        checkResource(i, j, x, y, grid);
+                        if (resource!=null)
+                            break;
+                    }
+                    if (resource!=null)
+                        break;
+                }
             }
         }
-        /*if(isForaging&&!isAttacking)
+    }
+
+    public void update()
+    {
+        if(resource!=null)
+            resource.setPosition(getX()-5,getY()-5);
+    }
+
+    public void checkResource(int i, int j, int x, int y, Grid grid)
+    {
+        if(!grid.cells[i+x][j+y].resources.isEmpty())
         {
-            for(int i=-1;i<2;i++)
-            {
-                for(int j=-1;j<2;j++)
-                {
-                    if(i!=0&&j!=0&&grid.cells[i][j].entity!=null)
-                        if(grid.cells[i][j].entity instanceof Attackable &&grid.cells[i][j].entity.getTeam()!=this.getTeam())
-                        {
-                            isAttacking = true;
-                            targetCreature = (Attackable)grid.cells[i][j].entity;
-                            break;
-                        }
-                }
-                if(isAttacking)
-                    break;
+            resource = grid.cells[i+x][j+y].getResource();
+            resource.pickedUp(this);
+        }
+    }
+
+    public void checkEnemy(int i, int j, int x, int y, Grid grid)
+    {
+        if(i!=0&&j!=0&&grid.cells[i+x][j+y].entity!=null)
+            if(grid.cells[i+x][j+y].entity instanceof Attackable &&grid.cells[i+x][j+y].entity.getTeam()!=this.getTeam()) {
+                if (!((Creature) grid.cells[i + x][j + y].entity).isAlive)
+                    return;
+                isAttacking = true;
+                targetCreature = (Creature) grid.cells[i + x][j + y].entity;
+                rotateTowards(targetCreature.getX(), targetCreature.getY());
+                if (targetCreature instanceof Creature)
+                    targetCreature.attacked(this);
             }
-        }*/
+    }
+
+    public void forage(World world)
+    {
+        if(isForaging)
+        {
+            isForaging=false;
+            if(resource!=null)
+            {
+                resource.drop(this,world);
+                resource = null;
+            }
+        }
+
+        else
+            isForaging=true;
     }
 
     public void setSpeed(float s){speed=s;}
@@ -174,6 +201,11 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
         if(penetration<0)
             penetration=0;
+        if(armor>damage)
+        {
+            penetration=0;
+            damage=1;
+        }
         health -= damage - penetration;
         if(health<0)
             this.die();

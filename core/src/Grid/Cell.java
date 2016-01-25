@@ -20,4 +20,17 @@ public class Cell {
         this.x=x;
         this.y=y;
     }
+
+    public void addResource(Resource resource)
+    {
+        resources.add(resource);
+    }
+
+    public Resource getResource()
+    {
+        resources.trimToSize();
+        Resource temp = resources.get(0);
+        resources.remove(temp);
+        return temp;
+    }
 }

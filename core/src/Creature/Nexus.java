@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Entity;
+import com.mygdx.game.Hive;
 import com.mygdx.game.Marker;
 import com.mygdx.game.World;
 
@@ -39,6 +40,7 @@ public class Nexus extends Entity {
 
     public boolean isSelected = false;
     private ArrayList<Creature> members = new ArrayList<Creature>();
+    private int casualties=0;
 
     public Nexus(ArrayList<Creature> creatures,World world,int team)
     {
@@ -95,11 +97,13 @@ public class Nexus extends Entity {
     public void forage()
     {
         if(isForaging)
-        {
             isForaging=false;
 
-        }
+        else
+            isForaging=true;
 
+        for(Creature creature : members)
+            creature.forage(world);
     }
 
     public void setMarker(Marker marker)
@@ -124,7 +128,16 @@ public class Nexus extends Entity {
                 texture.getWidth(),texture.getHeight(),false,false);
         batch.setColor(1f,1f,1f,1f);
         BitmapFont font = world.getFont();
-        font.setColor(Color.RED);
+
+        if(casualties>10)
+            font.setColor(Color.RED);
+        else if(casualties>1)
+            font.setColor(Color.YELLOW);
+        else if(isForaging)
+            font.setColor(Color.GREEN);
+        else
+            font.setColor(Color.BLACK);
+
         font.getData().setScale(world.getZoom()+1);
         font.draw(batch,""+members.size(),getX()+texture.getWidth()/4-world.getZoom()*10,getY()+texture.getHeight()/(3f/2f));
     }
@@ -187,9 +200,11 @@ public class Nexus extends Entity {
             if(ticks%5==0)
                 creature.checkSurroundings(world.grid);
             world.setFootPrint(creature);
+            creature.update();
         }
-
+        casualties+=remove.size();
         members.removeAll(remove);
+
         if(members.isEmpty())
         {
             world.removeEntity(this);
@@ -199,6 +214,22 @@ public class Nexus extends Entity {
         if(ticks%30==0)
             for(Creature creature : members)
                 creature.dealDamage();
+
+        if(ticks%120==0&&casualties>0)
+            casualties--;
+
+        if(isForaging)
+        {
+            for(Creature creature : members)
+            {
+                if(creature.resource!=null)
+                {
+                    Hive hive = world.getClosestHive(creature);
+                    if(hive!=null)
+                        creature.moveTowards(new Vector2(hive.getX(),hive.getY()));
+                }
+            }
+        }
 
         switch(command)
         {
@@ -213,9 +244,7 @@ public class Nexus extends Entity {
 
                         if(r.nextInt(30)==0)
                         {
-                            world.clearFootPrint(creature);
                             creature.moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
-                            world.setFootPrint(creature);
                         }
                     }
 
@@ -229,11 +258,9 @@ public class Nexus extends Entity {
                 else if(targetVector!=null)
                     for(Creature creature : members)
                     {
-                        if(creature.isAttacking)
+                        if(creature.isAttacking||creature.resource!=null)
                             continue;
-                        world.clearFootPrint(creature);
                         creature.moveTowards(targetVector);
-                        world.setFootPrint(creature);
                     }
                 break;
         }

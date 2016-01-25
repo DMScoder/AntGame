@@ -34,7 +34,7 @@ public class Script {
     private void generateCricketNexus()
     {
         Random r = new Random();
-        int n = 100;
+        int n = 15;
         Nexus crickets = new Nexus(world,2);
         for(int i=0;i<n;i++)
         {

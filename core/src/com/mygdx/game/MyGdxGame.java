@@ -17,7 +17,7 @@ Passes most of the work to the master class "World"
 
 Things that should be added:
 More creature types
-Foraging ability
+Done! Foraging ability
 Research
 Biomass/resources in general
 Integration with player object

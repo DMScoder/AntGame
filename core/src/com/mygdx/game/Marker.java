@@ -40,8 +40,6 @@ public class Marker extends Entity{
             type = Nexus.MOVE;
         else if(string.equals("AttackMarker"))
             type = Nexus.ATTACK;
-        else
-            type = Nexus.FORAGE;
         removeSelf();
         world.addMarker(this);
         set = true;

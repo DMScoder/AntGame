@@ -84,6 +84,36 @@ public class World {
         entities.add(entity);
     }
 
+    public Hive getClosestHive(Entity entity)
+    {
+        Hive closest = null;
+
+        for(Hive hive : Hives)
+        {
+            if(hive.getTeam()==entity.getTeam())
+            {
+                if(closest==null)
+                {
+                    closest = hive;
+                }
+
+                else if(getDistance(closest,entity)>getDistance(hive,entity))
+                {
+                    closest = hive;
+                }
+            }
+        }
+        return closest;
+    }
+
+    public float getDistance(Actor actor1, Actor actor2)
+    {
+        float distanceX = Math.abs(actor1.getX()-actor2.getX());
+        float distanceY = Math.abs(actor2.getY()-actor2.getY());
+
+        return distanceX + distanceY;
+    }
+
     public void addNexus(Nexus nexus)
     {
         nexi.add(nexus);
@@ -161,6 +191,22 @@ public class World {
                 grid.cells[i+x][j+y].entity = null;
     }
 
+    public Cell[] getFootPrints(Entity entity)
+    {
+        Cell[] temp = new Cell[entity.getGridSize()*entity.getGridSize()];
+
+        int x = (int)entity.getX()/25+grid.size/2;
+        int y = (int)entity.getY()/25+grid.size/2;
+
+        int k=0;
+        for(int i=0;i<entity.getGridSize();i++)
+            for(int j=0;j<entity.getGridSize();j++) {
+                temp[k] =  grid.cells[i + x][j + y];
+                k++;
+            }
+        return temp;
+    }
+
     public Cell getFootPrint(Entity entity)
     {
         int x = (int)entity.getX()/25+grid.size/2;
@@ -181,10 +227,8 @@ public class World {
 
     public void selection(int x, int y, int w, int h)
     {
-        System.out.println(x+" "+y+" "+w+" "+h);
         Vector3 vector1 = new Vector3(x,y,0);
         screenToStageCoordinates(vector1);
-        System.out.println(vector1.x+" "+vector1.y+" "+w+" "+h);
         Rectangle rectangle = new Rectangle(vector1.x,vector1.y,w*camera.zoom,h*camera.zoom);
         for(Entity entity : entities)
         {
