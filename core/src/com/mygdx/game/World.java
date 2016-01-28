@@ -90,7 +90,7 @@ public class World {
 
         for(Hive hive : Hives)
         {
-            if(hive.getTeam()==entity.getTeam())
+            if(hive.player.getFaction()==((ColonyUnit)entity).getFaction())
             {
                 if(closest==null)
                 {
@@ -124,7 +124,7 @@ public class World {
         Vector3 vector = new Vector3(screenX,screenY,0);
         screenToStageCoordinates(vector);
         if(nexi.size()>1) {
-            Nexus newNexus = new Nexus(this,1);
+            Nexus newNexus = new Nexus(this,nexi.get(0).player);
             for (Nexus nexus : nexi) {
                 newNexus.merge(nexus);
             }
@@ -137,12 +137,13 @@ public class World {
             nexi.get(0).setTargetVector(vector);
     }
 
-    public void createHive(float x, float y, int team)
+    public Hive createHive(float x, float y, Player player)
     {
-        Hive hive = new Hive(x,y,this,team);
+        Hive hive = new Hive(x,y,this,player);
         Hives.add(hive);
         entities.add(hive);
         addResource(hive);
+        return hive;
     }
 
     public void createMarker(float screenX,float screenY)
@@ -232,7 +233,7 @@ public class World {
         Rectangle rectangle = new Rectangle(vector1.x,vector1.y,w*camera.zoom,h*camera.zoom);
         for(Entity entity : entities)
         {
-            if(entity instanceof Nexus && entity.getTeam()==1)
+            if(entity instanceof Nexus && ((Nexus) entity).player.getControl() == Player.HUMAN)
             {
                 if(rectangle.contains(entity.getX(),entity.getY()))
                     ((Nexus) entity).select();

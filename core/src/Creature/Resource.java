@@ -14,7 +14,7 @@ public class Resource extends Entity {
     private int biomass;
 
     public Resource(float x, float y, String type, int biomass, float rotation,Cell cell) {
-        super(x, y,0,0);
+        super(x, y,0);
         this.biomass=biomass;
         this.setRotation(rotation);
         this.setTexture(type);
@@ -26,7 +26,10 @@ public class Resource extends Entity {
     public void pickedUp(Creature creature)
     {
         cell = null;
-        this.setTexture("CarryResource");
+        //if(type.equals("Ant_Fire_Worker_Corpse")||type.equals("Ant_Default_Worker_Corpse"))
+            //this.setTexture(type);
+        //else
+            //this.setTexture("CarryResource");
     }
 
     public void drop(Creature creature, World world)
@@ -34,6 +37,7 @@ public class Resource extends Entity {
         this.setTexture(type);
         this.setPosition(creature.getX(),creature.getY());
         this.cell = world.getFootPrint(creature);
+        cell.addResource(this);
     }
 
     public String getType()

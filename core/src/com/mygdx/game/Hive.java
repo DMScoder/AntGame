@@ -13,15 +13,19 @@ public class Hive extends Entity{
     boolean deserted = false;
     World world;
     SpawnButton button=null;
+    public Player player;
+    int hiveLevel = 1;
 
-    public Hive(float x, float y,World world, int team) {
-        super(x, y,50,team);
+    public Hive(float x, float y,World world, Player player) {
+        super(x, y,player.getTeam());
+        this.player = player;
         this.world = world;
-        this.setTexture("AntHill");
-        this.scaleBy(5f);
-        this.setGridSize(3);
+        this.setTexture(Player.factionString[player.getFaction()]+"_Hive"+hiveLevel);
+        this.scaleBy(2f);
+        this.setGridSize(9);
+        this.setTeam(player.getTeam());
 
-        if(team==1)
+        if(player.getControl()==Player.HUMAN)
             this.addListener(new InputListener()
         {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
@@ -32,16 +36,17 @@ public class Hive extends Entity{
         });
     }
 
-    public void spawnAnts()
+    public Nexus spawnAnts()
     {
-        Nexus nexus = new Nexus(world,getTeam());
+        Nexus nexus = new Nexus(world,player);
         for(int i=0;i<10;i++) {
-            Ant ant = new Ant(this.getX(), this.getY());
-            ant.setTeam(1);
-            nexus.addCreature(ant);
-            world.addCreature(ant);
+            ColonyUnit worker = new ColonyUnit(getX(),getY(),player.getFaction(),ColonyUnit.WORKER);
+            worker.setTeam(player.getTeam());
+            nexus.addCreature(worker);
+            world.addCreature(worker);
         }
         world.addEntity(nexus);
+        return nexus;
     }
 
     public void deleteButton()
@@ -73,7 +78,7 @@ public class Hive extends Entity{
             for(int i=0;i<cells.length;i++)
             {
                 if(cells[i].entity!=null&&cells[i].entity instanceof Creature)
-                    if(cells[i].entity.getTeam()==this.getTeam()&&((Creature) cells[i].entity).resource!=null)
+                    if(((ColonyUnit)cells[i].entity).getFaction()==this.player.getFaction()&&((Creature) cells[i].entity).resource!=null)
                     {
                         Resource resource = ((Creature) cells[i].entity).resource;
                         ((Creature) cells[i].entity).resource = null;
@@ -85,8 +90,7 @@ public class Hive extends Entity{
     }
 
     public void updateResource(Resource resource)
-    {
-        System.out.println(resource.getType()+ " returned for "+resource.getBiomass()+" biomass");
+    {;
         resource.remove();
     }
 
@@ -95,7 +99,7 @@ public class Hive extends Entity{
         Hive host;
 
         public SpawnButton(float x, float y,Hive host) {
-            super(x, y,2,0);
+            super(x, y,0);
             this.host = host;
             this.setTexture("AntIcon");
             this.addListener(new InputListener()

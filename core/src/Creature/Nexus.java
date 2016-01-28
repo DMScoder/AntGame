@@ -8,10 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.mygdx.game.Entity;
-import com.mygdx.game.Hive;
-import com.mygdx.game.Marker;
-import com.mygdx.game.World;
+import com.mygdx.game.*;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -40,6 +37,7 @@ public class Nexus extends Entity {
 
     public boolean isSelected = false;
     private ArrayList<Creature> members = new ArrayList<Creature>();
+    public Player player;
     private int casualties=0;
 
     public Nexus(ArrayList<Creature> creatures,World world,int team)
@@ -50,16 +48,17 @@ public class Nexus extends Entity {
         initialize();
     }
 
-    public Nexus(World world,int team)
+    public Nexus(World world,Player player)
     {
-        super(0,0,2,team);
+        super(-5000,-5000,player.getTeam());
         this.world=world;
+        this.player=player;
         initialize();
     }
 
     public void initialize()
     {
-        if(getTeam()==1) {
+        if(player.getControl()==Player.HUMAN) {
             this.setTexture("SelectionCircle");
             setUiScale(0);
             this.addListener(new InputListener() {
@@ -115,7 +114,7 @@ public class Nexus extends Entity {
 
     public void draw(Batch batch, float alpha)
     {
-        if(getTeam()!=1)
+        if(player.getControl()!= Player.HUMAN)
             return;
         if(isSelected)
             batch.setColor(Color.GREEN);
@@ -136,7 +135,7 @@ public class Nexus extends Entity {
         else if(isForaging)
             font.setColor(Color.GREEN);
         else
-            font.setColor(Color.BLACK);
+            font.setColor(Color.PURPLE);
 
         font.getData().setScale(world.getZoom()+1);
         font.draw(batch,""+members.size(),getX()+texture.getWidth()/4-world.getZoom()*10,getY()+texture.getHeight()/(3f/2f));
@@ -158,9 +157,9 @@ public class Nexus extends Entity {
         order(ticks);
     }
 
-    public void spawnResource(String name, Creature creature)
+    public void spawnResource(Creature creature)
     {
-        if(name.equals("Creature.Cricket"))
+        if(creature.getClass().getName().equals("Creature.Cricket"))
         {
             Resource resource1 = new Resource(creature.getX(),creature.getY(),"CricketBody",8,creature.getRotation(),world.getFootPrint(creature));
             Resource resource2 = new Resource(creature.getX(),creature.getY(),"CricketHead",4,creature.getRotation(),world.getFootPrint(creature));
@@ -177,9 +176,21 @@ public class Nexus extends Entity {
             world.addResource(resource7);
             world.addResource(resource8);
         }
+        else if(creature.getClass().getName().equals("Creature.ColonyUnit"))
+        {
+            Resource resource = new Resource(creature.getX(),creature.getY(),
+                    Player.factionString[((ColonyUnit)creature).getFaction()]+"_"+
+                            ColonyUnit.unitString[((ColonyUnit)creature).getUnitType()]+
+                            "_Corpse",
+                    2,
+                    creature.getRotation(),
+                    world.getFootPrint(creature));
+            world.addResource(resource);
+        }
+
         else
         {
-            Resource resource = new Resource(creature.getX(),creature.getY(),"Default_Ant_Corpse",2,creature.getRotation(),world.getFootPrint(creature));
+            Resource resource = new Resource(creature.getX(),creature.getY(),"Ant_Default_Worker_Corpse",2,creature.getRotation(),world.getFootPrint(creature));
             world.addResource(resource);
         }
     }
@@ -192,9 +203,11 @@ public class Nexus extends Entity {
             if(!creature.isAlive)
             {
                 remove.add(creature);
+                if(creature.resource!=null)
+                    creature.resource.drop(creature,world);
                 world.clearFootPrint(creature);
                 world.removeEntity(creature);
-                spawnResource(creature.getClass().getName(),creature);
+                spawnResource(creature);
                 continue;
             }
             if(ticks%5==0)
@@ -226,7 +239,7 @@ public class Nexus extends Entity {
                 {
                     Hive hive = world.getClosestHive(creature);
                     if(hive!=null)
-                        creature.moveTowards(new Vector2(hive.getX(),hive.getY()));
+                        creature.moveTowards(new Vector2(hive.getX()+hive.getOriginX(),hive.getY()+hive.getOriginY()));
                 }
             }
         }
@@ -275,6 +288,16 @@ public class Nexus extends Entity {
     {
         members.addAll(otherNexus.getMembers());
         otherNexus.members.clear();
+        if(otherNexus.isForaging)
+            isForaging=true;
+        if(isForaging)
+            for(Creature creature : members)
+                if(creature.isForaging==false)
+                {
+                    creature.isForaging=true;
+                    creature.forage(world);
+                }
+
         world.removeEntity(otherNexus);
     }
 

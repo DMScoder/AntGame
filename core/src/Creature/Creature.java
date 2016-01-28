@@ -1,9 +1,6 @@
 package Creature;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.mygdx.game.Entity;
@@ -20,6 +17,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     public boolean isAttacking = false;
     public boolean isForaging = false;
     public boolean isAlive = true;
+    public boolean isFlyer = false;
 
     private float damage;
     private float armorPiercing;
@@ -36,7 +34,7 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
 
     public Creature(float x, float y)
     {
-        super(x,y,100,0);
+        super(x,y);
     }
 
     private void move(float x, float y)
