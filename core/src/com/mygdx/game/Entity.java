@@ -11,18 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public abstract class Entity extends Actor{
 
     public Texture texture;
-    private int team=0;
     private int size=0;
     private int priority = 0;
+    private Player player;
 
     public Entity(float x, float y)
     {
       this.setPosition(x,y);
     }
-    public Entity(float x, float y,int team)
+    public Entity(float x, float y,Player player)
     {
+        this.player = player;
         this.setPosition(x,y);
-        this.team = team;
     }
 
     public void setTexture(String name)
@@ -32,13 +32,6 @@ public abstract class Entity extends Actor{
         this.setOrigin(texture.getWidth()/2,texture.getHeight()/2);
         setBounds(getX(),getY(),texture.getWidth(),texture.getHeight());
     }
-
-    public int getTeam()
-    {
-        return team;
-    }
-
-    public void setTeam(int i){team = i;}
 
     public void setUiScale(int amount) {}
 
@@ -51,6 +44,10 @@ public abstract class Entity extends Actor{
     {
         size = i;
     }
+
+    public void setPlayer(Player player){this.player=player;}
+
+    public Player getPlayer() {return player;}
 
     public void update(long ticks)
     {

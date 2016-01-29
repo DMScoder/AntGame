@@ -86,7 +86,10 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
             return;
         isAttacking = true;
         targetCreature = creature;
-        rotateTowards(getX()+creature.getX(),getY()+creature.getY());
+        int d = 1;
+        if(creature.getX()<this.getX())
+            d=-1;
+        rotateTowards(-getX()+creature.getX(),-getY()+creature.getY());
     }
 
     public void dealDamage()
@@ -106,7 +109,8 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
         int x = ((int)getX())/25+grid.size/2;
         int y = ((int)getY())/25+grid.size/2;
 
-        if(grid.cells[x][y].entity!=this&&grid.cells[x][y].entity!=null&&grid.cells[x][y].entity.getTeam()==this.getTeam())
+        if(grid.cells[x][y].entity!=this&&grid.cells[x][y].entity!=null&&
+                grid.cells[x][y].entity.getPlayer().getTeam()==this.getPlayer().getTeam())
         {
             Random r = new Random();
             moveTo(r.nextInt(3)-1,r.nextInt(3)-1);
@@ -159,12 +163,16 @@ public abstract class Creature extends Entity implements Attackable,DamageCapabl
     public void checkEnemy(int i, int j, int x, int y, Grid grid)
     {
         if(i!=0&&j!=0&&grid.cells[i+x][j+y].entity!=null)
-            if(grid.cells[i+x][j+y].entity instanceof Attackable &&grid.cells[i+x][j+y].entity.getTeam()!=this.getTeam()) {
+            if(grid.cells[i+x][j+y].entity instanceof Attackable &&
+                    grid.cells[i+x][j+y].entity.getPlayer().getTeam()!=this.getPlayer().getTeam()) {
                 if (!((Creature) grid.cells[i + x][j + y].entity).isAlive)
                     return;
                 isAttacking = true;
                 targetCreature = (Creature) grid.cells[i + x][j + y].entity;
-                rotateTowards(targetCreature.getX(), targetCreature.getY());
+                int d = 1;
+                if(targetCreature.getX()<this.getX())
+                    d=-1;
+                rotateTowards(targetCreature.getX()-this.getX(), targetCreature.getY()-this.getY());
                 if (targetCreature instanceof Creature)
                     targetCreature.attacked(this);
             }

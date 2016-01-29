@@ -90,7 +90,7 @@ public class World {
 
         for(Hive hive : Hives)
         {
-            if(hive.player.getFaction()==((ColonyUnit)entity).getFaction())
+            if(hive.player.getFaction()==((ColonyUnit)entity).getPlayer().getFaction())
             {
                 if(closest==null)
                 {

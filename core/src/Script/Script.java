@@ -1,5 +1,6 @@
 package Script;
 
+import Creature.ColonyUnit;
 import Creature.Cricket;
 import Creature.Nexus;
 import com.badlogic.gdx.math.Vector3;
@@ -35,28 +36,28 @@ public class Script {
         Player neutral = new Player(3,0,Player.HUMAN);
         world.createHive(0,0,player);
         Hive testHive = world.createHive(1000,2000,player);
-        Nexus test =  testHive.spawnAnts();
-        test.merge(testHive.spawnAnts());
-        test.merge(testHive.spawnAnts());
-        test.merge(testHive.spawnAnts());
+        Nexus test =  testHive.spawnAnts(ColonyUnit.WORKER);
+        test.merge(testHive.spawnAnts(ColonyUnit.WORKER));
+        test.merge(testHive.spawnAnts(ColonyUnit.WORKER));
+        test.merge(testHive.spawnAnts(ColonyUnit.WORKER));
 
         for(int i=0;i<5;i++)
         {
             Hive fireHive = world.createHive(i*-1000-1000,i*-1000-1000,fireAnts);
-            Nexus fireNexus = fireHive.spawnAnts();
+            Nexus fireNexus = fireHive.spawnAnts(ColonyUnit.WORKER);
             fireNexus.setTargetVector(new Vector3(-50,-50,0));
-            fireNexus = fireHive.spawnAnts();
+            fireNexus = fireHive.spawnAnts(ColonyUnit.WORKER);
             fireNexus.setTargetVector(new Vector3(-50,-50,0));
-            fireNexus = fireHive.spawnAnts();
+            fireNexus = fireHive.spawnAnts(ColonyUnit.WORKER);
             fireNexus.setTargetVector(new Vector3(-50,-50,0));
-            fireNexus = fireHive.spawnAnts();
+            fireNexus = fireHive.spawnAnts(ColonyUnit.WORKER);
             fireNexus.setTargetVector(new Vector3(-50,-50,0));
         }
         Hive fireHive = world.createHive(2000,2000,fireAnts);
-        Nexus fireNexus = fireHive.spawnAnts();
-        fireNexus.merge(fireHive.spawnAnts());
-        fireNexus.merge(fireHive.spawnAnts());
-        fireNexus.merge(fireHive.spawnAnts());
+        Nexus fireNexus = fireHive.spawnAnts(ColonyUnit.WORKER);
+        fireNexus.merge(fireHive.spawnAnts(ColonyUnit.WORKER));
+        fireNexus.merge(fireHive.spawnAnts(ColonyUnit.WORKER));
+        fireNexus.merge(fireHive.spawnAnts(ColonyUnit.WORKER));
         generateCricketNexus(neutral);
         generateCricketNexus(neutral);
         generateCricketNexus(neutral);

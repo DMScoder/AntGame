@@ -11,7 +11,7 @@ public class Cricket extends Creature{
     {
         super(x,y);
         this.setTexture("Cricket");
-        this.setTeam(player.getTeam());
+        this.setPlayer(player);
         this.setSpeed(10);
         this.setGridSize(2);
         this.setDamage(25);

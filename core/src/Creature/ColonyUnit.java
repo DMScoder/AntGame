@@ -18,13 +18,12 @@ public class ColonyUnit extends Creature {
 
 
     private int unitType;
-    private int faction;
 
-    public ColonyUnit(float x, float y, int faction, int unitType) {
+    public ColonyUnit(float x, float y, Player player, int unitType) {
         super(x, y);
-        this.faction = faction;
+        this.setPlayer(player);
         this.unitType = unitType;
-        this.setTexture(Player.factionString[faction] + "_" + unitString[unitType]);
+        this.setTexture(Player.factionString[player.getFaction()] + "_" + unitString[unitType]);
         this.setSpeed(20);
         this.setGridSize(1);
         this.setDamage(10);
@@ -35,11 +34,17 @@ public class ColonyUnit extends Creature {
     }
 
     private void setStats() {
-        switch (faction) {
+        switch (this.getPlayer().getFaction()) {
             case (Player.ANT_FIRE):
                 this.setDamage(15);
                 this.setArmorPiercing(1);
                 this.setHealth(90);
+        }
+        switch (unitType){
+            case(SOLDIER):
+                this.setDamage(this.getDamage()+30);
+                this.setHealth(this.getHealth()+200);
+                this.setArmor(this.getArmor()+5);
         }
     }
 
@@ -49,13 +54,5 @@ public class ColonyUnit extends Creature {
 
     public void setUnitType(int unitType) {
         this.unitType = unitType;
-    }
-
-    public int getFaction() {
-        return faction;
-    }
-
-    public void setFaction(int faction) {
-        this.faction = faction;
     }
 }

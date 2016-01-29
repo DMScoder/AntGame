@@ -10,38 +10,41 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
  */
 public class Hive extends Entity{
 
+    boolean buttonsCreated = false;
     boolean deserted = false;
     World world;
-    SpawnButton button=null;
+    SpawnButton[] buttons = new SpawnButton[6];
     public Player player;
     int hiveLevel = 1;
 
     public Hive(float x, float y,World world, Player player) {
-        super(x, y,player.getTeam());
+        super(x, y,player);
         this.player = player;
         this.world = world;
         this.setTexture(Player.factionString[player.getFaction()]+"_Hive"+hiveLevel);
         this.scaleBy(2f);
-        this.setGridSize(9);
-        this.setTeam(player.getTeam());
+        this.setGridSize(4);
 
         if(player.getControl()==Player.HUMAN)
             this.addListener(new InputListener()
         {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
-                    if(button==null)
+                    if(!buttonsCreated)
+                    {
                         createButton();
+                        buttonsCreated = true;
+                    }
+
                     return true;
                 }
         });
     }
 
-    public Nexus spawnAnts()
+    public Nexus spawnAnts(int type)
     {
         Nexus nexus = new Nexus(world,player);
         for(int i=0;i<10;i++) {
-            ColonyUnit worker = new ColonyUnit(getX(),getY(),player.getFaction(),ColonyUnit.WORKER);
-            worker.setTeam(player.getTeam());
+            ColonyUnit worker = new ColonyUnit(getX(),getY(),player,type);
             nexus.addCreature(worker);
             world.addCreature(worker);
         }
@@ -51,22 +54,35 @@ public class Hive extends Entity{
 
     public void deleteButton()
     {
-        if (button != null) {
-            button.remove();
-            button = null;
+        int i= 0;
+        if (buttons[0]!=null) {
+            for(SpawnButton button : buttons)
+            {
+                world.removeEntity(button);
+                buttons[i] = null;
+                i++;
+            }
         }
+        buttonsCreated = false;
     }
 
     public void setUiScale(int amount)
     {
-        if(button!=null)
-            button.setScale(world.getZoom()*.5f+1);
+        if(buttons[0]!=null)
+            for(int i=0;i<buttons.length;i++)
+                buttons[i].setScale(world.getZoom()*.5f+.5f);
     }
 
     private void createButton()
     {
-        button = new SpawnButton(this.getX(),this.getY()-this.getHeight()*4,this);
-        world.addActor(button);
+        buttons[0] = new SpawnButton(this.getX(),this.getY()-this.getHeight()*2,ColonyUnit.WORKER,this);
+        buttons[1] = new SpawnButton(this.getX()+64,this.getY()-this.getHeight()*2,ColonyUnit.SOLDIER,this);
+        buttons[2] = new SpawnButton(this.getX()+128,this.getY()-this.getHeight()*2,ColonyUnit.FLYER,this);
+        buttons[3] = new SpawnButton(this.getX(),-64+this.getY()-this.getHeight()*2,ColonyUnit.FORAGER,this);
+        buttons[4] = new SpawnButton(this.getX()+64,-64+this.getY()-this.getHeight()*2,ColonyUnit.SCOUT,this);
+        buttons[5] = new SpawnButton(this.getX()+128,-64+this.getY()-this.getHeight()*2,ColonyUnit.QUEEN,this);
+        for(int i=0;i<buttons.length;i++)
+            world.addActor(buttons[i]);
         setUiScale(0);
     }
 
@@ -77,8 +93,8 @@ public class Hive extends Entity{
             Cell[] cells = world.getFootPrints(this);
             for(int i=0;i<cells.length;i++)
             {
-                if(cells[i].entity!=null&&cells[i].entity instanceof Creature)
-                    if(((ColonyUnit)cells[i].entity).getFaction()==this.player.getFaction()&&((Creature) cells[i].entity).resource!=null)
+                if(cells[i].entity!=null&&cells[i].entity instanceof ColonyUnit)
+                    if(((ColonyUnit)cells[i].entity).getPlayer().getFaction()==this.player.getFaction()&&((Creature) cells[i].entity).resource!=null)
                     {
                         Resource resource = ((Creature) cells[i].entity).resource;
                         ((Creature) cells[i].entity).resource = null;
@@ -97,11 +113,13 @@ public class Hive extends Entity{
     public class SpawnButton extends Entity {
 
         Hive host;
+        int type;
 
-        public SpawnButton(float x, float y,Hive host) {
-            super(x, y,0);
+        public SpawnButton(float x, float y,int type,Hive host) {
+            super(x, y);
             this.host = host;
-            this.setTexture("AntIcon");
+            this.type=type;
+            this.setTexture("Icon_"+ColonyUnit.unitString[type]);
             this.addListener(new InputListener()
             {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -113,7 +131,7 @@ public class Hive extends Entity{
 
         private void spawnAnt()
         {
-            host.spawnAnts();
+            host.spawnAnts(type);
         }
     }
 }

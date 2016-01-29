@@ -50,7 +50,7 @@ public class Nexus extends Entity {
 
     public Nexus(World world,Player player)
     {
-        super(-5000,-5000,player.getTeam());
+        super(-5000,-5000,player);
         this.world=world;
         this.player=player;
         initialize();
@@ -176,16 +176,48 @@ public class Nexus extends Entity {
             world.addResource(resource7);
             world.addResource(resource8);
         }
+
         else if(creature.getClass().getName().equals("Creature.ColonyUnit"))
         {
-            Resource resource = new Resource(creature.getX(),creature.getY(),
-                    Player.factionString[((ColonyUnit)creature).getFaction()]+"_"+
-                            ColonyUnit.unitString[((ColonyUnit)creature).getUnitType()]+
-                            "_Corpse",
-                    2,
-                    creature.getRotation(),
-                    world.getFootPrint(creature));
-            world.addResource(resource);
+            if(((ColonyUnit)creature).getUnitType()==ColonyUnit.SOLDIER)
+            {
+                Resource resource = new Resource(creature.getX(),creature.getY(),
+                        "Ant_Fire_Soldier_Corpse1",
+                        4,
+                        creature.getRotation(),
+                        world.getFootPrint(creature));
+                Resource resource2 = new Resource(creature.getX(),creature.getY(),
+                        "Ant_Fire_Soldier_Corpse2",
+                        6,
+                        creature.getRotation(),
+                        world.getFootPrint(creature));
+                Resource resource3 = new Resource(creature.getX(),creature.getY(),
+                        "Ant_Fire_Soldier_Corpse3",
+                        3,
+                        creature.getRotation(),
+                        world.getFootPrint(creature));
+                Resource resource4 = new Resource(creature.getX(),creature.getY(),
+                        "Ant_Fire_Soldier_Corpse4",
+                        3,
+                        creature.getRotation(),
+                        world.getFootPrint(creature));
+                world.addResource(resource);
+                world.addResource(resource2);
+                world.addResource(resource3);
+                world.addResource(resource4);
+            }
+            else if(((ColonyUnit)creature).getUnitType()==ColonyUnit.WORKER)
+            {
+                Resource resource = new Resource(creature.getX(),creature.getY(),
+                        Player.factionString[((ColonyUnit)creature).getPlayer().getFaction()]+"_"+
+                                ColonyUnit.unitString[((ColonyUnit)creature).getUnitType()]+
+                                "_Corpse",
+                        2,
+                        creature.getRotation(),
+                        world.getFootPrint(creature));
+                world.addResource(resource);
+            }
+
         }
 
         else

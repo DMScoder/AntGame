@@ -14,7 +14,7 @@ public class Resource extends Entity {
     private int biomass;
 
     public Resource(float x, float y, String type, int biomass, float rotation,Cell cell) {
-        super(x, y,0);
+        super(x, y);
         this.biomass=biomass;
         this.setRotation(rotation);
         this.setTexture(type);
