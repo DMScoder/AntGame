@@ -27,9 +27,9 @@ public class Marker extends Entity{
         move = new MarkerButton(vector.x-50f*world.getZoom(),vector.y,this,"MoveMarker");
         attack = new MarkerButton(vector.x,vector.y,this,"AttackMarker");
         forage = new MarkerButton(vector.x+50f*world.getZoom(),vector.y,this,"ForageMarker");
-        world.addActor(move);
-        world.addActor(attack);
-        world.addActor(forage);
+        //world.addActor(move);
+        //world.addActor(attack);
+        //world.addActor(forage);
         setUiScale(0);
     }
 

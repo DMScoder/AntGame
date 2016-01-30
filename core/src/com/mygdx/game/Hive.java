@@ -68,21 +68,34 @@ public class Hive extends Entity{
 
     public void setUiScale(int amount)
     {
-        if(buttons[0]!=null)
-            for(int i=0;i<buttons.length;i++)
-                buttons[i].setScale(world.getZoom()*.5f+.5f);
+        if(buttons[0]!=null) {
+            for (int i = 0; i < buttons.length; i++)
+                buttons[i].setScale(world.getZoom() * .5f + .5f);
+
+            buttons[1].setX(buttons[0].getX() + buttons[0].getWidth()*world.getZoom()*.5f+15f);
+
+            buttons[2].setX(buttons[1].getX() + buttons[1].getWidth()*world.getZoom()*.5f+15f);
+
+            buttons[3].setY(buttons[0].getY()- buttons[0].getHeight()*world.getZoom()*.5f-15f);
+
+            buttons[4].setX(buttons[3].getX() + buttons[3].getWidth()*world.getZoom()*.5f+15f);
+            buttons[4].setY(buttons[0].getY()- buttons[0].getHeight()*world.getZoom()*.5f-15f);
+
+            buttons[5].setX(buttons[4].getX() + buttons[4].getWidth()*world.getZoom()*.5f+15f);
+            buttons[5].setY(buttons[0].getY() - buttons[0].getHeight()*world.getZoom()*.5f-15f);
+        }
     }
 
     private void createButton()
     {
-        buttons[0] = new SpawnButton(this.getX(),this.getY()-this.getHeight()*2,ColonyUnit.WORKER,this);
-        buttons[1] = new SpawnButton(this.getX()+64,this.getY()-this.getHeight()*2,ColonyUnit.SOLDIER,this);
-        buttons[2] = new SpawnButton(this.getX()+128,this.getY()-this.getHeight()*2,ColonyUnit.FLYER,this);
-        buttons[3] = new SpawnButton(this.getX(),-64+this.getY()-this.getHeight()*2,ColonyUnit.FORAGER,this);
-        buttons[4] = new SpawnButton(this.getX()+64,-64+this.getY()-this.getHeight()*2,ColonyUnit.SCOUT,this);
-        buttons[5] = new SpawnButton(this.getX()+128,-64+this.getY()-this.getHeight()*2,ColonyUnit.QUEEN,this);
+        buttons[0] = new SpawnButton(this.getX(),this.getY()-this.getHeight()*3,ColonyUnit.WORKER,this);
+        buttons[1] = new SpawnButton(this.getX()+64,this.getY()-this.getHeight()*3,ColonyUnit.SOLDIER,this);
+        buttons[2] = new SpawnButton(this.getX()+128,this.getY()-this.getHeight()*3,ColonyUnit.FLYER,this);
+        buttons[3] = new SpawnButton(this.getX(),-64+this.getY()-this.getHeight()*3,ColonyUnit.FORAGER,this);
+        buttons[4] = new SpawnButton(this.getX()+64,-64+this.getY()-this.getHeight()*3,ColonyUnit.SCOUT,this);
+        buttons[5] = new SpawnButton(this.getX()+128,-64+this.getY()-this.getHeight()*3,ColonyUnit.QUEEN,this);
         for(int i=0;i<buttons.length;i++)
-            world.addActor(buttons[i]);
+            world.addFirstTier(buttons[i]);
         setUiScale(0);
     }
 

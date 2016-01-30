@@ -32,8 +32,8 @@ public class Script {
     private void defaultScript()
     {
         Player player = new Player(1,Player.ANT_DEFAULT,Player.HUMAN);
-        Player fireAnts = new Player(2,Player.ANT_FIRE,Player.HUMAN);
-        Player neutral = new Player(3,0,Player.HUMAN);
+        Player fireAnts = new Player(2,Player.ANT_FIRE,Player.COMPUTER);
+        Player neutral = new Player(3,0,Player.NONE);
         world.createHive(0,0,player);
         Hive testHive = world.createHive(1000,2000,player);
         Nexus test =  testHive.spawnAnts(ColonyUnit.WORKER);

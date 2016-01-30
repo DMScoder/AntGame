@@ -69,6 +69,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor{
 		fps.log();
 		if(drawSelection)
 			drawSelectionBox();
+		world.drawTopography(shapeRenderer);
 	}
 
 	private void handleInput()

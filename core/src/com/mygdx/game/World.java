@@ -3,6 +3,7 @@ package com.mygdx.game;
 import Creature.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -28,8 +29,10 @@ public class World {
     ArrayList <Hive> Hives = new ArrayList<Hive>();
     ArrayList <Nexus> nexi = new ArrayList<Nexus>();
     long ticks=0;
-    Group resources = new Group();
-    Group everythingElse = new Group();
+    Group fourthTier = new Group();
+    Group thirdTier = new Group();
+    Group secondTier = new Group();
+    Group firstTier = new Group();
 
     BitmapFont font = new BitmapFont();
 
@@ -37,8 +40,10 @@ public class World {
     {
         this.stage = stage;
         this.camera = camera;
-        stage.addActor(resources);
-        stage.addActor(everythingElse);
+        stage.addActor(fourthTier);
+        stage.addActor(thirdTier);
+        stage.addActor(secondTier);
+        stage.addActor(firstTier);
         level_script = new Script(1,this);
     }
 
@@ -80,7 +85,7 @@ public class World {
 
     public void addEntity(Entity entity)
     {
-        addActor(entity);
+        addSecondTier(entity);
         entities.add(entity);
     }
 
@@ -142,7 +147,7 @@ public class World {
         Hive hive = new Hive(x,y,this,player);
         Hives.add(hive);
         entities.add(hive);
-        addResource(hive);
+        addThirdTier(hive);
         return hive;
     }
 
@@ -163,11 +168,18 @@ public class World {
         stage.addActor(marker);
     }
 
+    public void drawTopography(ShapeRenderer renderer)
+    {
+        renderer.setAutoShapeType(true);
+        renderer.begin();
+        renderer.end();
+    }
+
     public void addCreature(Creature creature)
     {
         setFootPrint(creature);
         entities.add(creature);
-        addActor(creature);
+        addSecondTier(creature);
     }
 
     public void removeEntity(Entity entity)
@@ -251,15 +263,16 @@ public class World {
         this.entities.addAll(creatures);
     }
 
-    public void addResource(Actor actor)
+    public void addThirdTier(Actor actor)
     {
-        resources.addActor(actor);
+        thirdTier.addActor(actor);
     }
 
-    public void addActor(Actor actor)
-    {
-        everythingElse.addActor(actor);
-    }
+    public void addSecondTier(Actor actor) {secondTier.addActor(actor);}
+
+    public void addFirstTier(Actor actor) {firstTier.addActor(actor);}
+
+    public void addFourthTier(Actor actor) {fourthTier.addActor(actor);}
 
     public Vector3 screenToStageCoordinates (Vector3 screenCoords) {
         stage.getViewport().unproject(screenCoords);

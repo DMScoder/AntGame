@@ -168,13 +168,13 @@ public class Nexus extends Entity {
             Resource resource6 = new Resource(creature.getX(),creature.getY(),"CricketLeg3",2,creature.getRotation(),world.getFootPrint(creature));
             Resource resource7 = new Resource(creature.getX(),creature.getY(),"CricketLeg4",2,creature.getRotation(),world.getFootPrint(creature));
             Resource resource8 = new Resource(creature.getX(),creature.getY(),"CricketLeg5",2,creature.getRotation(),world.getFootPrint(creature));
-            world.addResource(resource1);
-            world.addResource(resource2);
-            world.addResource(resource3);
-            world.addResource(resource5);
-            world.addResource(resource6);
-            world.addResource(resource7);
-            world.addResource(resource8);
+            world.addThirdTier(resource1);
+            world.addThirdTier(resource2);
+            world.addThirdTier(resource3);
+            world.addThirdTier(resource5);
+            world.addThirdTier(resource6);
+            world.addThirdTier(resource7);
+            world.addThirdTier(resource8);
         }
 
         else if(creature.getClass().getName().equals("Creature.ColonyUnit"))
@@ -201,10 +201,10 @@ public class Nexus extends Entity {
                         3,
                         creature.getRotation(),
                         world.getFootPrint(creature));
-                world.addResource(resource);
-                world.addResource(resource2);
-                world.addResource(resource3);
-                world.addResource(resource4);
+                world.addThirdTier(resource);
+                world.addThirdTier(resource2);
+                world.addThirdTier(resource3);
+                world.addThirdTier(resource4);
             }
             else if(((ColonyUnit)creature).getUnitType()==ColonyUnit.WORKER)
             {
@@ -215,7 +215,7 @@ public class Nexus extends Entity {
                         2,
                         creature.getRotation(),
                         world.getFootPrint(creature));
-                world.addResource(resource);
+                world.addThirdTier(resource);
             }
 
         }
@@ -223,7 +223,7 @@ public class Nexus extends Entity {
         else
         {
             Resource resource = new Resource(creature.getX(),creature.getY(),"Ant_Default_Worker_Corpse",2,creature.getRotation(),world.getFootPrint(creature));
-            world.addResource(resource);
+            world.addThirdTier(resource);
         }
     }
 
