@@ -1,9 +1,16 @@
-# AntGame
+# Purpose
 
 Hello! The purpose of this project is to test out the capbilities of the libGdx library while providing practice for myself.
-Perhaps one day this game will be released to the masses, but the main point is for my own amusement.
 
-TODO:
+#Gameplay
+Gameplay consists of managing hives which can spawn different kinds of ants. These ants are controlled by groups, and giving orders to two groups of ants will automatically merge them. Separating groups in half is planned later on and is important to get the game working to a playable state.
+
+#Technologies Featured
+The core game is powered by the libGDX library
+All visual elements are presented as actors updated by the "stage" class
+Groovy scripts are used to create scenarios. Full scenario scripting is planned later on.
+
+#TODO
 More creature types
 Foraging ability
 Research
